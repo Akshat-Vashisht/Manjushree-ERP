@@ -35,9 +35,13 @@ async def get_containers(db: Session = Depends(get_db)):
 
 
 @router.patch('/{container_id}')
-async def delete_container(container_id: int, response: Response, db: Session = Depends(get_db)):
+async def delete_container(
+    container_id: int, 
+    last_updated_by: int, 
+    response: Response, 
+    db: Session = Depends(get_db)):
     try:
-        soft_delete(db, container_id)
+        soft_delete(db, container_id, last_updated_by)
         response.status_code = status.HTTP_204_NO_CONTENT
     except ValueError as e:
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={"detail": str(e)})

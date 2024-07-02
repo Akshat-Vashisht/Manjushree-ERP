@@ -1,8 +1,10 @@
 from sqlalchemy.orm import Session
-from uuid import uuid4
 import datetime
-from .schemas import ContainerCreate, Container
+from .schemas import ContainerCreate
 from ..models import ContainerCategoryMaster, ContainerMaster
+
+CATEGORY_LENGTH = 3
+TOTAL_CONTAINER_CODE_LENGTH = 10
 
 
 def add_container(db: Session, container_input: ContainerCreate):
@@ -12,7 +14,15 @@ def add_container(db: Session, container_input: ContainerCreate):
     if not category:
         raise ValueError("Container Category Not Found")
 
-    container_code = f"{category.container_category_code[:3].upper()}{uuid4().hex[:7]}"
+    category_name = category.container_category_code[:3]
+    count = db.query(ContainerMaster).count()
+
+    serial_no = f"{count + 1}"
+    num_zeros = TOTAL_CONTAINER_CODE_LENGTH - CATEGORY_LENGTH - len(serial_no)
+    padded_serial_no = '0' * num_zeros + serial_no
+
+    container_code = f"{category_name}{padded_serial_no}"
+
     container = ContainerMaster(
         container_category_master_id=container_input.container_category_master_id,
         container_code=container_code,
@@ -36,15 +46,17 @@ def fetch_containers(db: Session):
     return containers
 
 
-def soft_delete(db: Session, container_master_id: int):
+def soft_delete(db: Session, container_master_id: int, last_updated_by: int):
     container = db.query(ContainerMaster).filter(
         ContainerMaster.container_master_id == container_master_id).first()
 
     if not container:
         raise ValueError("No Container Found With That ID")
 
-    container.is_active = "sadadadasasfasf"
+    container.is_active = False
     container.container_unregistered_date = datetime.date.today()
+    container.last_updated_dt = datetime.datetime.now(datetime.UTC)
+    container.last_updated_by = last_updated_by
     db.commit()
     db.refresh(container)
 

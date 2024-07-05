@@ -160,3 +160,15 @@ def upsert_container_movement(db: Session, container_movement_input: ContainerMo
     db.refresh(container_movement_history)
 
     return container_movement_history
+
+
+def delete_container_movement(db: Session, container_master_id: int):
+    container_movement = db.query(ContainerMovement).filter(
+        ContainerMovement.container_master_id == container_master_id).first()
+    # If the container hasn't been scanned
+    if not container_movement:
+        return
+    
+    db.delete(container_movement)
+    db.commit()
+    return container_movement

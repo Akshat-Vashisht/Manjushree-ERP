@@ -4,6 +4,7 @@ import datetime
 from ...exceptions import DataNotFoundError
 from .schemas import ContainerCreateSchema
 from ...models import ContainerCategoryMaster, ContainerMaster
+from ..container_movement.handler import delete_container_movement
 TOTAL_CONTAINER_CODE_LENGTH = 10
 
 
@@ -59,8 +60,8 @@ def soft_delete(db: Session, container_master_id: int, last_updated_by: int):
     container.container_unregistered_date = datetime.date.today()
     container.last_updated_dt = datetime.datetime.now(datetime.UTC)
     container.last_updated_by = last_updated_by
-    
+
     db.commit()
     db.refresh(container)
-
-    return container
+    
+    delete_container_movement(db, container.container_master_id)

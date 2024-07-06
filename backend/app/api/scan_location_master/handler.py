@@ -1,6 +1,4 @@
 from sqlalchemy.orm import Session
-
-from ...utils import get_db
 from ...models import ScanLocationMaster
 
 

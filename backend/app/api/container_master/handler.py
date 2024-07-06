@@ -4,7 +4,7 @@ import datetime
 from ...utils import fetch_data
 from .schemas import ContainerCreateSchema, ContainerUpdateSchema
 from ...models import ContainerCategoryMaster, ContainerMaster
-from ..container_movement.handler import delete_container_movement
+from ..container_movement_master.handler import delete_container_movement
 TOTAL_CONTAINER_CODE_LENGTH = 10
 
 

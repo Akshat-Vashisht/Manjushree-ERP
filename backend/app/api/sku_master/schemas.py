@@ -11,4 +11,4 @@ class SKUSchema(BaseModel):
     last_update_by: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True

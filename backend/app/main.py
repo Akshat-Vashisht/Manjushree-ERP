@@ -6,6 +6,7 @@ from .api.container_movement_master.router import router as container_movement_r
 from .api.scan_location_master.router import router as scan_location_master_router
 from .api.sku_master.router import router as sku_master_router
 from .api.container_category_master.router import router as container_category_router
+from .api.pick_list_master.router import router as pick_list_master_router
 
 app = FastAPI(debug=True)
 app.include_router(container_master_router)
@@ -13,6 +14,7 @@ app.include_router(container_movement_router)
 app.include_router(scan_location_master_router)
 app.include_router(sku_master_router)
 app.include_router(container_category_router)
+app.include_router(pick_list_master_router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=['*'],

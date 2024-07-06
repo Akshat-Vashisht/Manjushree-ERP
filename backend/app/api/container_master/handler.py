@@ -2,7 +2,6 @@ from sqlalchemy.orm import Session
 import datetime
 
 from ...utils import fetch_data
-from ...exceptions import DataNotFoundError
 from .schemas import ContainerCreateSchema, ContainerUpdateSchema
 from ...models import ContainerCategoryMaster, ContainerMaster
 from ..container_movement.handler import delete_container_movement
@@ -10,12 +9,8 @@ TOTAL_CONTAINER_CODE_LENGTH = 10
 
 
 def add_container(db: Session, container_input: ContainerCreateSchema):
-    category = db.query(ContainerCategoryMaster).filter(
-        ContainerCategoryMaster.container_category_master_id == container_input.container_category_master_id).first()
-
-    if not category:
-        raise DataNotFoundError(
-            'Container Category Master', container_input.container_category_master_id)
+    category = fetch_data(
+        db, ContainerCategoryMaster, 'container_category_master_id', container_input.container_category_master_id)
 
     category_name = category.container_category_code
     count = db.query(ContainerMaster).count()
@@ -51,11 +46,7 @@ def fetch_containers(db: Session):
 
 
 def soft_delete(db: Session, container_master_id: int, last_updated_by: int):
-    container = db.query(ContainerMaster).filter(
-        ContainerMaster.container_master_id == container_master_id).first()
-
-    if not container:
-        raise DataNotFoundError('Container Master', container_master_id)
+    container = fetch_data(db, ContainerMaster, 'container_master_id', container_master_id)
 
     container.is_active = False
     container.container_unregistered_date = datetime.date.today()

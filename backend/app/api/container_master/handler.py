@@ -1,8 +1,9 @@
 from sqlalchemy.orm import Session
 import datetime
 
+from ...utils import fetch_data
 from ...exceptions import DataNotFoundError
-from .schemas import ContainerCreateSchema
+from .schemas import ContainerCreateSchema, ContainerUpdateSchema
 from ...models import ContainerCategoryMaster, ContainerMaster
 from ..container_movement.handler import delete_container_movement
 TOTAL_CONTAINER_CODE_LENGTH = 10
@@ -63,5 +64,20 @@ def soft_delete(db: Session, container_master_id: int, last_updated_by: int):
 
     db.commit()
     db.refresh(container)
-    
+
     delete_container_movement(db, container.container_master_id)
+
+
+def update_container_data(db: Session, container_input: ContainerUpdateSchema):
+    container = fetch_data(
+        db, ContainerMaster, 'container_master_id', container_input.container_master_id)
+
+    container.container_status = container_input.container_status
+    container.rfid_tag_no = container_input.rfid_tag_no
+    container.last_updated_dt = datetime.datetime.now(datetime.UTC)
+    container.last_updated_by = container_input.last_updated_by
+
+    db.commit()
+    db.refresh(container)
+
+    return container

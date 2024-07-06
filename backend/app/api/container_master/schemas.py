@@ -24,3 +24,9 @@ class ContainerSchema(BaseModel):
 
     class Config:
         orm_mode = True
+
+class ContainerUpdateSchema(BaseModel):
+    container_master_id: int
+    container_status: str
+    rfid_tag_no: str
+    last_updated_by: int

@@ -23,7 +23,7 @@ class ContainerSchema(BaseModel):
     last_updated_by: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class ContainerUpdateSchema(BaseModel):
     container_master_id: int

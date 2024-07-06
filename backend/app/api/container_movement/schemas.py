@@ -36,4 +36,4 @@ class ContainerMovementSchema(BaseModel):
     scanning_done_by: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True

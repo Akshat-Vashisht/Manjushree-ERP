@@ -3,57 +3,38 @@ from sqlalchemy.orm import Session
 from .schemas import ContainerMovementCreateSchema
 from ...models import ContainerCategoryMaster, ContainerMaster, ContainerMovement, ContainerMovementHistory, SKUMaster, BusinessEntityMaster, PickListMaster, ScanLocationMaster, RFIDReaderMaster
 from ...utils import fetch_data
-from ...exceptions import DataNotFoundError
 
 
 def get_values(db: Session, container_movement_input: ContainerMovementCreateSchema):
     container = fetch_data(db, ContainerMaster, 'container_master_id',
                            container_movement_input.container_master_id)
-    if not container:
-        raise DataNotFoundError('container_master_id',
-                                container_movement_input.container_master_id)
 
     container_category = fetch_data(
         db, ContainerCategoryMaster, 'container_category_master_id', container.container_category_master_id)
-    if not container_category:
-        raise DataNotFoundError(
-            'container_category_master_id', container.container_category_master_id)
-
+    
     location = fetch_data(db, ScanLocationMaster, 'scan_location_master_id',
                           container_movement_input.scan_location_master_id)
-    if not location:
-        raise DataNotFoundError('scan_location_master_id',
-                                container_movement_input.scan_location_master_id)
 
     rfid_reader = fetch_data(db, RFIDReaderMaster, 'rfid_reader_master_id',
                              container_movement_input.rfid_reader_master_id)
-    if not rfid_reader:
-        raise DataNotFoundError('rfid_reader_master_id',
-                                container_movement_input.rfid_reader_master_id)
 
     sku = None
     if container_movement_input.sku_master_id:
         sku = fetch_data(db, SKUMaster, 'sku_master_id',
                          container_movement_input.sku_master_id)
-        if not sku:
-            raise DataNotFoundError(
-                'sku_master_id', container_movement_input.sku_master_id)
+
 
     business_entity = None
     if container_movement_input.business_entity_master_id:
         business_entity = fetch_data(db, BusinessEntityMaster, 'business_entity_master_id',
                                      container_movement_input.business_entity_master_id)
-        if not business_entity:
-            raise DataNotFoundError(
-                'business_entity_master_id', container_movement_input.business_entity_master_id)
+
 
     pick_list = None
     if container_movement_input.pick_list_master_id:
         pick_list = fetch_data(db, PickListMaster, 'pick_list_master_id',
                                container_movement_input.pick_list_master_id)
-        if not pick_list:
-            raise DataNotFoundError(
-                'pick_list_master_id', container_movement_input.pick_list_master_id)
+
 
     values = {
         'container': container,
@@ -121,7 +102,7 @@ def update_container(db: Session, container_movement_input: ContainerMovementCre
 
 
 def upsert_container_movement(db: Session, container_movement_input: ContainerMovementCreateSchema):
-
+    
     container_movement = db.query(ContainerMovement).filter(
         ContainerMovement.container_master_id == container_movement_input.container_master_id).first()
 

@@ -3,10 +3,12 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from .api.container_master.router import router as container_master_router
 from .api.container_movement.router import router as container_movement_router
+from .api.scan_location_master.router import router as scan_location_master_router
 
 app = FastAPI(debug=True)
 app.include_router(container_master_router)
 app.include_router(container_movement_router)
+app.include_router(scan_location_master_router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=['*'],

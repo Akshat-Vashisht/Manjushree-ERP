@@ -39,6 +39,8 @@ def add_container(db: Session, container_input: ContainerCreateSchema):
     db.commit()
     db.refresh(container)
 
+    return container
+
 
 def fetch_containers(db: Session):
     containers = db.query(ContainerMaster).all()

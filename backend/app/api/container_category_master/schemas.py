@@ -11,3 +11,7 @@ class ContainerCategorySchema(BaseModel):
 
     class Config:
         from_attributes = True
+
+class ContainerCategoryWithId(BaseModel):
+    container_category_master_id: int
+    container_category: str

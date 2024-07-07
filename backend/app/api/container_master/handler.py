@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 import datetime
 
 from ...utils import fetch_data
-from .schemas import ContainerCreateSchema, ContainerUpdateSchema
+from .schemas import ContainerCreateSchema, ContainerUpdateSchema, ContainerWithCategorySchema
 from ...models import ContainerCategoryMaster, ContainerMaster
 from ..container_movement_master.handler import delete_container_movement
 TOTAL_CONTAINER_CODE_LENGTH = 10
@@ -12,15 +12,17 @@ def add_container(db: Session, container_input: ContainerCreateSchema):
     category = fetch_data(
         db, ContainerCategoryMaster, 'container_category_master_id', container_input.container_category_master_id)
 
-    category_name = category.container_category_code
+    category_code = category.container_category_code
     count = db.query(ContainerMaster).count()
 
     serial_no = f'{count + 1}'
     num_zeros = TOTAL_CONTAINER_CODE_LENGTH - \
-        len(category_name) - len(serial_no)
+        len(category_code) - len(serial_no)
     padded_serial_no = '0' * num_zeros + serial_no
 
-    container_code = f'{category_name}{padded_serial_no}'
+    container_code = f'{category_code}{padded_serial_no}'
+
+    category_name = category.container_category
 
     container = ContainerMaster(
         container_category_master_id=container_input.container_category_master_id,
@@ -37,16 +39,21 @@ def add_container(db: Session, container_input: ContainerCreateSchema):
     db.commit()
     db.refresh(container)
 
-    return container
-
 
 def fetch_containers(db: Session):
     containers = db.query(ContainerMaster).all()
+
+    for container in containers:
+        container_category = fetch_data(
+            db, ContainerCategoryMaster, 'container_category_master_id', container.container_category_master_id)
+        container.container_category = container_category.container_category
+
     return containers
 
 
 def soft_delete(db: Session, container_master_id: int, last_updated_by: int):
-    container = fetch_data(db, ContainerMaster, 'container_master_id', container_master_id)
+    container = fetch_data(db, ContainerMaster,
+                           'container_master_id', container_master_id)
 
     container.is_active = False
     container.container_unregistered_date = datetime.date.today()

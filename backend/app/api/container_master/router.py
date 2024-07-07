@@ -5,7 +5,7 @@ from fastapi.encoders import jsonable_encoder
 from ...exceptions import DataNotFoundError
 
 
-from .schemas import ContainerSchema, ContainerCreateSchema, ContainerUpdateSchema
+from .schemas import ContainerSchema, ContainerCreateSchema, ContainerUpdateSchema, ContainerWithCategorySchema
 from sqlalchemy.orm import Session
 from ...utils import get_db
 from .handler import add_container, fetch_containers, soft_delete, update_container_data
@@ -27,7 +27,7 @@ async def create_container(container: ContainerCreateSchema, db: Session = Depen
         return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content={'detail': str(e)})
 
 
-@router.get('/', response_model=list[ContainerSchema])
+@router.get('/', response_model=list[ContainerWithCategorySchema])
 async def get_containers(db: Session = Depends(get_db)):
     try:
         containers = jsonable_encoder(fetch_containers(db))

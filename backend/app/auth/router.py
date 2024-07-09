@@ -56,4 +56,4 @@ async def read_users_me(current_user: UserMaster = Depends(get_current_user)):
 @router.post("/logout")
 async def logout(response: Response):
     response.delete_cookie("access_token")
-    return JSONResponse(status_code=status.HTTP_200_OK, content={"detail": "Logged out"})
+    return {'detail': 'Logged out successfully'}

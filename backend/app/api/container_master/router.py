@@ -2,6 +2,9 @@ from fastapi import APIRouter, Depends, Response, status
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 
+from ...auth.handler import get_current_user
+
+
 from ...exceptions import DataNotFoundError
 
 
@@ -14,6 +17,7 @@ router = APIRouter(
     prefix='/containers',
     tags=['container_master']
 )
+router.dependencies = [Depends(get_current_user)]
 
 
 @router.post('/', response_model=ContainerSchema)

@@ -6,11 +6,13 @@ from sqlalchemy.orm import Session
 from .schemas import PickListSchema
 from ...utils import get_db
 from .handler import fetch_pick_list
+from ...auth.handler import get_current_user
 
 router = APIRouter(
     prefix='/pick-list',
     tags=['pick_list']
 )
+router.dependencies = [Depends(get_current_user)]
 
 
 @router.get('/{code}', response_model=list[PickListSchema])

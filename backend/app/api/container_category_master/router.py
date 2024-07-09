@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 
+from ...auth.handler import get_current_user
 from .schemas import ContainerCategorySchema, ContainerCategoryWithId
 from ...utils import get_db
 from .handler import fetch_container_category, fetch_container_id_and_category
@@ -11,6 +12,7 @@ router = APIRouter(
     prefix='/container-categories',
     tags=['container-categories']
 )
+router.dependencies = [Depends(get_current_user)]
 
 
 @router.get('/', response_model=list[ContainerCategorySchema])

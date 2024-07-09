@@ -6,12 +6,13 @@ from ...utils import get_db
 from .handler import upsert_container_movement
 from .schemas import ContainerMovementCreateSchema, ContainerMovementSchema
 from ...exceptions import DataNotFoundError
-
+from ...auth.handler import get_current_user
 
 router = APIRouter(
     prefix='/container-movement',
     tags=['container-movement']
 )
+router.dependencies = [Depends(get_current_user)]
 
 
 @router.post('/', response_model=ContainerMovementSchema)

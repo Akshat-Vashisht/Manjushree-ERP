@@ -6,11 +6,13 @@ from sqlalchemy.orm import Session
 from .schemas import SKUSchema
 from ...utils import get_db
 from .handler import fetch_scan_locations
+from ...auth.handler import get_current_user
 
 router = APIRouter(
     prefix='/sku',
     tags=['sku_master']
 )
+router.dependencies = [Depends(get_current_user)]
 
 
 @router.get('/', response_model=list[SKUSchema])

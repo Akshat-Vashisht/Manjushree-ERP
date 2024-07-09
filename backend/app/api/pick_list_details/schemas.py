@@ -1,6 +1,4 @@
 from pydantic import BaseModel
-from datetime import datetime
-
 
 class PickListDetailsSchema(BaseModel):
     pick_list_master_id: int

@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 import datetime
 
 from ...utils import fetch_data
-from .schemas import ContainerCreateSchema, ContainerUpdateSchema, ContainerWithCategorySchema
+from .schemas import ContainerCreateSchema, ContainerUpdateSchema
 from ...models import ContainerCategoryMaster, ContainerMaster
 from ..container_movement_master.handler import delete_container_movement
 TOTAL_CONTAINER_CODE_LENGTH = 10
@@ -21,8 +21,6 @@ def add_container(db: Session, container_input: ContainerCreateSchema):
     padded_serial_no = '0' * num_zeros + serial_no
 
     container_code = f'{category_code}{padded_serial_no}'
-
-    category_name = category.container_category
 
     container = ContainerMaster(
         container_category_master_id=container_input.container_category_master_id,

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { DatePicker, Select, Table } from "antd";
+import { DatePicker, Modal, Select, Table } from "antd";
 import { SiTicktick } from "react-icons/si";
 import { RiDeleteBinLine } from "react-icons/ri";
 import axios from "axios";
 import { format } from "date-fns";
+import toast from "react-hot-toast";
 
 const ContainerMaster = () => {
   const [selectionType, setSelectionType] = useState("checkbox");
@@ -75,13 +76,16 @@ const ContainerMaster = () => {
   const getAllContainer = async () => {
     try {
       const res = await axios.get("http://127.0.0.1:8000/containers/");
-      const dataWithKeys = res.data.detail.sort((a,b)=>a.container_master_id - b.container_master_id).map((item, index) => ({
-        ...item,
-        key: item.container_master_id,
-      }));
+      const dataWithKeys = res.data.detail
+        .sort((a, b) => a.container_master_id - b.container_master_id)
+        .map((item) => ({
+          ...item,
+          key: item.container_master_id,
+        }));
       setContainerData(dataWithKeys);
     } catch (error) {
       console.error("ERR::GET::CONTAINER", error);
+      toast.error("Something went wrong");
     }
   };
 
@@ -95,6 +99,7 @@ const ContainerMaster = () => {
       );
     } catch (error) {
       console.error("ERR::GET::CATEGORY", error);
+      toast.error("Something went wrong");
     }
   };
 
@@ -112,15 +117,29 @@ const ContainerMaster = () => {
 
   const handleSubmit = async () => {
     try {
-      if(!isEditOn)
-      await axios.post("http://127.0.0.1:8000/containers/", createContainer);
-    else
-     await axios.patch("http://127.0.0.1:8000/containers/", createContainer);
-       
+      let res;
+      if (!isEditOn)
+        res = await axios.post(
+          "http://127.0.0.1:8000/containers/",
+          createContainer
+        );
+      else
+        res = await axios.patch(
+          "http://127.0.0.1:8000/containers/",
+          createContainer
+        );
+
+      console.log(res);
+      if (res.status === 201) {
+        toast.success(`${res.data.detail.container_code} created!`);
+      } else if (res.status === 204 && isEditOn) {
+        toast.success(`${checkedRows[0].container_code} updated!`);
+      }
       getAllContainer();
       handleClear();
     } catch (error) {
       console.error("ERR::POST::CONTAINER");
+      toast.error("Something went wrong");
     }
   };
 
@@ -143,20 +162,38 @@ const ContainerMaster = () => {
       last_updated_by: 1,
     });
   };
-  const onDelete = async (container) =>{
-    const {container_master_id, last_updated_by} = container[0];
+  const onDelete = async (container) => {
+    const { container_master_id, last_updated_by } = container[0];
     try {
-      const res = await axios.patch(`http://127.0.0.1:8000/containers/${container_master_id}?last_updated_by=${last_updated_by}`)
+      const res = await axios.patch(
+        `http://127.0.0.1:8000/containers/${container_master_id}?last_updated_by=${last_updated_by}`
+      );
       getAllContainer();
-
+      if (res.status === 204) {
+        toast.success(`${checkedRows[0].container_code} deleted!`);
+      }
     } catch (error) {
-      console.error("ERR::PATCH::CONTAINER",error)
+      console.error("ERR::PATCH::CONTAINER", error);
+      toast.error("Something went wrong");
     }
-  }
+  };
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
       setCheckedRows(selectedRows);
     },
+  };
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+  const handleOk = () => {
+    onDelete(checkedRows);
+    setIsModalOpen(false);
+
+  };
+  const handleCancel = () => {
+    setIsModalOpen(false);
   };
 
   useEffect(() => {
@@ -165,8 +202,8 @@ const ContainerMaster = () => {
   }, []);
 
   useEffect(() => {
-    console.log("checked", createContainer);
-  }, [createContainer]);
+    console.log("checked", checkedRows);
+  }, [checkedRows]);
 
   return (
     <div>
@@ -204,7 +241,7 @@ const ContainerMaster = () => {
             <div className="flex flex-col gap-y-1">
               <label className="text-sm font-medium">Container Category</label>
               <Select
-              disabled={isEditOn}
+                disabled={isEditOn}
                 value={createContainer.container_category_master_id}
                 className="bg-slate-100"
                 onChange={handleChange}
@@ -240,10 +277,14 @@ const ContainerMaster = () => {
             >
               Edit
             </button>
-            <button 
+
+            <button
               disabled={checkedRows.length !== 1}
-            onClick={()=>onDelete(checkedRows)}
-            className="p-1 px-3 bg-gray-200 rounded-md disabled:bg-gray-100">Delete</button>
+              onClick={showModal}
+              className="p-1 px-3 bg-gray-200 rounded-md disabled:bg-gray-100"
+            >
+              Delete
+            </button>
           </div>
         )}
         <Table
@@ -254,6 +295,11 @@ const ContainerMaster = () => {
           columns={columns}
           dataSource={containerData}
         />
+      
+              <Modal title="Delete Container" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+        
+        <p>Are you sure you want to delete {checkedRows[0]?.container_code} ?</p>
+      </Modal>
       </div>
     </div>
   );

@@ -12,8 +12,6 @@ class UserMaster(Base):
     password = Column(String(20), nullable=False)
     role = Column(Integer, nullable=False)
     is_active = Column(Boolean, nullable=False, default=True)
-    last_updated_dt = Column(DateTime, nullable=False)
-    last_updated_by = Column(Integer, nullable=False)
 
 
 class CompanyMaster(Base):
@@ -31,7 +29,7 @@ class CompanyMaster(Base):
     telephone_no1 = Column(String(20))
     mobile_no1 = Column(String(15))
     email_id = Column(String(100))
-    logo = Column(String)  # Assuming logo is stored as a string path or URL
+    logo = Column(String)  
     is_active = Column(Boolean, nullable=False, default=True)
     last_updated_dt = Column(DateTime, nullable=False)
     last_updated_by = Column(Integer, nullable=False)
@@ -52,7 +50,7 @@ class BusinessEntityMaster(Base):
     telephone_no1 = Column(String(20))
     mobile_no1 = Column(String(15))
     email_id = Column(String(100))
-    logo = Column(String)  # Assuming logo is stored as a string path or URL
+    logo = Column(String)  
     is_client = Column(Boolean, nullable=False)
     is_vendor = Column(Boolean, nullable=False)
     is_transporter = Column(Boolean, nullable=False)

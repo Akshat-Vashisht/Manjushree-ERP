@@ -7,11 +7,14 @@ class UserCreate(BaseModel):
     password: str
     role: int
 
+
 class UserResponse(BaseModel):
+    user_master_id: int
     user_code: str
     user_name: str
     role: int
     is_active: bool
+
 
 class Token(BaseModel):
     access_token: str

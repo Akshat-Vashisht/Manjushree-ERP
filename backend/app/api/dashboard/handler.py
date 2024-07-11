@@ -90,7 +90,7 @@ def get_dashboard_1(db: Session):
         "total_count": total_count,
         "location_wise_count": [
             {"location": "At Manjushree", "count": containers_manjushree},
-            {"location": "Not at Manjushree", "count": containers_not_manjushree}
+            {"location": "At Client", "count": containers_not_manjushree}
         ]
     }
 

@@ -3,8 +3,12 @@ import { DatePicker, Modal, Select, Table } from "antd";
 import { SiTicktick } from "react-icons/si";
 import { RiDeleteBinLine } from "react-icons/ri";
 import axios from "axios";
-import { format } from "date-fns";
+import { format, setDate } from "date-fns";
 import toast from "react-hot-toast";
+import Layout from "../components/Layout";
+import { axiosConfig } from "../axios/axiosConfig";
+import { useDispatch, useSelector } from "react-redux";
+
 
 const ContainerMaster = () => {
   const [selectionType, setSelectionType] = useState("checkbox");
@@ -12,6 +16,8 @@ const ContainerMaster = () => {
   const [checkedRows, setCheckedRows] = useState([]);
   const [categoryData, setCategoryData] = useState([]);
   const [isEditOn, setIsEditOn] = useState(false);
+  const master_id = useSelector((state) => state.user.user.user_master_id);
+
   const [createContainer, setCreateContainer] = useState({
     container_category_master_id: null,
     container_status: "",
@@ -75,7 +81,7 @@ const ContainerMaster = () => {
 
   const getAllContainer = async () => {
     try {
-      const res = await axios.get("http://127.0.0.1:8000/containers/");
+      const res = await axiosConfig.get("/containers/");
       const dataWithKeys = res.data.detail
         .sort((a, b) => a.container_master_id - b.container_master_id)
         .map((item) => ({
@@ -91,8 +97,8 @@ const ContainerMaster = () => {
 
   const getAllCategory = async () => {
     try {
-      const res = await axios.get(
-        "http://127.0.0.1:8000/container-categories/category-id"
+      const res = await axiosConfig.get(
+        "/container-categories/category-id"
       );
       setCategoryData(
         res.data.detail.map((item) => ({ value: item.id, label: item.name }))
@@ -119,13 +125,13 @@ const ContainerMaster = () => {
     try {
       let res;
       if (!isEditOn)
-        res = await axios.post(
-          "http://127.0.0.1:8000/containers/",
+        res = await axiosConfig.post(
+          "/containers/",
           createContainer
         );
       else
-        res = await axios.patch(
-          "http://127.0.0.1:8000/containers/",
+        res = await axiosConfig.patch(
+          "/containers/",
           createContainer
         );
 
@@ -165,8 +171,8 @@ const ContainerMaster = () => {
   const onDelete = async (container) => {
     const { container_master_id, last_updated_by } = container[0];
     try {
-      const res = await axios.patch(
-        `http://127.0.0.1:8000/containers/${container_master_id}?last_updated_by=${last_updated_by}`
+      const res = await axiosConfig.patch(
+        `/containers/${container_master_id}?last_updated_by=${last_updated_by}`
       );
       getAllContainer();
       if (res.status === 204) {
@@ -202,11 +208,16 @@ const ContainerMaster = () => {
   }, []);
 
   useEffect(() => {
-    console.log("checked", checkedRows);
-  }, [checkedRows]);
+    setCreateContainer(
+      {
+        ...createContainer,
+        ["last_updated_by"]:master_id
+      }
+    )
+  }, [master_id]);
 
   return (
-    <div>
+    <Layout>
       <h1 className="text-2xl p-3 font-semibold text-slate-800">
         Container Master
       </h1>
@@ -301,7 +312,7 @@ const ContainerMaster = () => {
         <p>Are you sure you want to delete {checkedRows[0]?.container_code} ?</p>
       </Modal>
       </div>
-    </div>
+    </Layout>
   );
 };
 

@@ -33,7 +33,7 @@ const Login = () => {
         setLoading(true);
         const promise = axiosConfig.post("/auth/login", data);
         const res = await promise;
-        console.log(res)
+        console.log(res);
         toast.promise(promise, {
           loading: "Logging in",
           success: "Logged in Successfully",
@@ -42,14 +42,14 @@ const Login = () => {
         if (res.status == 200) {
           dispatch(setLoggedin(true));
           const userRes = await axiosConfig.get("/auth/users/me");
-          console.log(userRes)
+          console.log(userRes);
           dispatch(addUser(userRes.data));
           const userRole = userRes.data.role;
-            navigate(`/${userRole}/dashboard`);
+          navigate(`/${userRole}/dashboard`);
         }
         console.log("user login api response", res);
       } catch (error) {
-        toast.error("Something went wrong");
+        toast.error(error.response.data.detail);
       } finally {
         setLoading(false);
       }
@@ -62,9 +62,9 @@ const Login = () => {
   useEffect(() => {
     if (state) {
       setData({
-        user_name:state.user_name,
-        password:state.password
-      })
+        user_name: state.user_name,
+        password: state.password,
+      });
     }
   }, []);
 

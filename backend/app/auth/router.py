@@ -46,7 +46,7 @@ async def login_for_access_token(user_login: UserLogin, response: Response, db: 
     )
 
     response.set_cookie(key="access_token",
-                        value=access_token, httponly=True)
+                        value=access_token, httponly=True, samesite='none', secure=True)
 
     return {"access_token": access_token, "token_type": "bearer"}
 

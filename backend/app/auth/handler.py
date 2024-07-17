@@ -15,6 +15,7 @@ dotenv.load_dotenv(dotenv_path='backend/.env')
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 1440
+TOTAL_USER_CODE_LENGTH = 10
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -87,3 +88,11 @@ async def get_current_user(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid token",
         )
+
+
+def get_user_code(db: Session):
+    count = db.query(UserMaster).count()
+    serial_no = f'{count + 1}'
+    num_zeros = TOTAL_USER_CODE_LENGTH - 1 - len(serial_no)
+    padded_serial_no = '0' * num_zeros + serial_no
+    return f'E{padded_serial_no}'

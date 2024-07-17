@@ -9,7 +9,6 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState({
-    user_code: "E001",
     user_name: "",
     password: "",
     cnfPassword:"",

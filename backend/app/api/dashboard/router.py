@@ -11,7 +11,7 @@ router = APIRouter(
     prefix='/dashboard',
     tags=['dashboard']
 )
-# router.dependencies = [Depends(get_current_user)]
+router.dependencies = [Depends(get_current_user)]
 
 
 @router.get('/dashboard-4')

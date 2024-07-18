@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Layout from '../../components/Layout'
 import { Select, Table } from 'antd';
 import { SiTicktick } from 'react-icons/si';
 import { RiDeleteBinLine } from 'react-icons/ri';
+import { axiosConfig } from '../../axios/axiosConfig';
 
 function UsersIndex() {
   const [isEditOn, setisEditOn] = useState(false);
@@ -70,6 +71,15 @@ function UsersIndex() {
   const handleRoleChange = (value) => {
     setcreateUser({...createUser, 'role_id': value});
   }
+
+  const getAllUsers = async () => {
+    const res = await axiosConfig.get('/users/');
+    console.log(res);
+  }
+
+  useEffect(() => {
+    getAllUsers();
+  }, []);
     
   return (
     <Layout>

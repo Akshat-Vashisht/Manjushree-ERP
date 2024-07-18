@@ -1,3 +1,12 @@
+# import os
+# import sys
+
+# current_dir = os.path.dirname(os.path.abspath(__file__))
+# src_path = os.path.abspath(os.path.join(current_dir, '..'))
+
+# if src_path not in sys.path:
+#     sys.path.append(src_path)
+
 from fastapi import FastAPI, status
 from fastapi.responses import JSONResponse
 from starlette.middleware.cors import CORSMiddleware
@@ -10,6 +19,12 @@ from .api.pick_list_master.router import router as pick_list_master_router
 from .api.pick_list_details.router import router as pick_list_details_router
 from .auth.router import router as auth_router
 from .api.dashboard.router import router as dashboard_router
+from .api.user_master.router import router as user_master_router
+
+from .database import engine
+from .models import Base
+
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(debug=True)
 app.include_router(container_master_router)
@@ -21,6 +36,7 @@ app.include_router(pick_list_master_router)
 app.include_router(pick_list_details_router)
 app.include_router(auth_router)
 app.include_router(dashboard_router)
+app.include_router(user_master_router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[

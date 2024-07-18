@@ -6,6 +6,8 @@ import Signup from "./pages/Signup";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import AdminDashboard from "./pages/AdminDashboard";
 import useUserUtility from "./utils/useUserUtility";
+import UsersIndex from "./pages/User/Index";
+
 function App() {
   useUserUtility();
   return (
@@ -30,6 +32,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route exact path="/users" element={<UsersIndex />} />
       </Routes>
     </Router>
   );

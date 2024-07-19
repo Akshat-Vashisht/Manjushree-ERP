@@ -63,18 +63,18 @@ def get_containers_at_manjushree_details(db: Session):
 def get_all_clients(db: Session):
     clients = db.query(
         BusinessEntityMaster.business_entity_name).where(BusinessEntityMaster.is_client).distinct().all()
-    return [client.business_entity_name for client in clients] + ['all']
+    return ['All'] + [client.business_entity_name for client in clients]
 
 
 def get_all_vendors(db: Session):
     vendors = db.query(
         BusinessEntityMaster.business_entity_name).where(BusinessEntityMaster.is_vendor).distinct().all()
-    return [vendor.business_entity_name for vendor in vendors] + ['all']
+    return ['All'] + [vendor.business_entity_name for vendor in vendors]
 
 
 def get_client_report(db: Session, client_name: str):
     clients = get_all_clients(db)
-    if client_name == 'all':
+    if client_name.lower() == 'all':
         containers = db.query(
             ContainerMovement.business_entity_name,
             ContainerMovement.scanning_dt.cast(Date).label('date'),
@@ -115,7 +115,7 @@ def get_client_report(db: Session, client_name: str):
 
 def get_vendor_report(db: Session, vendor_name: str):
     vendors = get_all_vendors(db)
-    if vendor_name == 'all':
+    if vendor_name.lower() == 'all':
         containers = db.query(
             ContainerMovement.business_entity_name,
             ContainerMovement.scanning_dt.cast(Date).label('date'),

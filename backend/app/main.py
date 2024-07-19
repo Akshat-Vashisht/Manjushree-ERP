@@ -26,7 +26,7 @@ from .models import Base
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(debug=True)
+app = FastAPI(debug=True, docs_url='/')
 app.include_router(container_master_router)
 app.include_router(container_movement_router)
 app.include_router(scan_location_master_router)

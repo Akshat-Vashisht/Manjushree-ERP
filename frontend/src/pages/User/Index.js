@@ -4,49 +4,43 @@ import { Select, Table } from 'antd';
 import { SiTicktick } from 'react-icons/si';
 import { RiDeleteBinLine } from 'react-icons/ri';
 import { axiosConfig } from '../../axios/axiosConfig';
+import toast from 'react-hot-toast';
+
+const createUserFormState = {
+  user_code: "",
+  user_name: "",
+  password: "",
+  confirm_password: "",
+  role: null
+};
 
 function UsersIndex() {
-  const [isEditOn, setisEditOn] = useState(false);
-  const [createUser, setcreateUser] = useState({
-    user_code: "",
-    user_name: "",
-    password: "",
-    confirm_password: "",
-    role_id: null
-  });
+  const [selectionType, setSelectionType] = useState("checkbox");
+  const [isEditOn, setIsEditOn] = useState(false);
+  const [createUser, setCreateUser] = useState(createUserFormState);
+  const [userData, setUserData] = useState([]);
+  const [checkedRows, setCheckedRows] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
 
-  const dataSource = [
-    {
-      key: '1',
-      name: 'Mike',
-      age: 32,
-      address: '10 Downing Street',
-    },
-    {
-      key: '2',
-      name: 'John',
-      age: 42,
-      address: '10 Downing Street',
-    },
-  ];
-  
-  const columns = [
-    {
-      title: 'Name',
-      dataIndex: 'name',
-      key: 'name',
-    },
-    {
-      title: 'Age',
-      dataIndex: 'age',
-      key: 'age',
-    },
-    {
-      title: 'Address',
-      dataIndex: 'address',
-      key: 'address',
-    },
-  ];
+  const getRoleName = (roleId) => {
+    switch(roleId) {
+      case 1:
+        return 'Admin';
+        break;
+      case 2:
+        return 'Manager';
+        break;
+      case 3:
+        return 'Supervisor';
+        break;
+      case 4:
+        return 'Operator';
+        break;
+    }
+  }
 
   const roles = [
     {
@@ -63,18 +57,76 @@ function UsersIndex() {
     }
   ];
 
+  const columns = [
+    {
+      title: "Code",
+      dataIndex: "user_code"
+    },
+    {
+      title: "Name",
+      dataIndex: "user_name"
+    },
+    {
+      title: "Role",
+      dataIndex: "role",
+      render: (role) => getRoleName(role)
+    }
+  ]
+
   const handleInputChange = (event) => {
     const { name, value } = event.target
-    setcreateUser({...createUser, [name]: value});
+    setCreateUser({...createUser, [name]: value});
   }
 
   const handleRoleChange = (value) => {
-    setcreateUser({...createUser, 'role_id': value});
+    setCreateUser({...createUser, 'role': value});
   }
+
+  const handleClear = () => {
+    setIsEditOn(false);
+    setCreateUser(createUserFormState);
+  };
 
   const getAllUsers = async () => {
     const res = await axiosConfig.get('/users/');
-    console.log(res);
+    console.log(res.data);
+
+    const data = res.data.sort((a, b) => a.user_master_id - b.user_master_id)
+                  .map((user) => ({
+                    ...user,
+                    key: user.user_master_id
+                  }))
+    setUserData(data);
+  }
+
+  const rowSelection = {
+    onChange: (selectedRowKeys, selectedRows) => {
+      setCheckedRows(selectedRows);
+    },
+  };
+
+  const onEdit = (users) => {
+    setCreateUser({
+      user_code: users[0].user_code,
+      user_name: users[0].user_name,
+      role: users[0].role,
+    });
+  };
+  
+  const handleSubmit = async (e) => {
+    try {
+      let res;
+
+      res = await axiosConfig.post('/users/', createUser);
+
+      if(res.status === 201) {
+        toast.success(`User created successfully`)
+      }
+      
+      handleClear();
+      await getAllUsers();
+    } catch(error) {
+    }
   }
 
   useEffect(() => {
@@ -99,6 +151,7 @@ function UsersIndex() {
                 type="text" 
                 name="user_code"
                 onChange={handleInputChange}
+                value={createUser.user_code}
                 className="bg-slate-100 hover:bg-white hover:border-blue-500 border border-slate-200 p-1 rounded-md text-slate-600" 
               />
             </div>
@@ -113,6 +166,7 @@ function UsersIndex() {
                 type="text" 
                 name="user_name"
                 onChange={handleInputChange}
+                value={createUser.user_name}
                 className="bg-slate-100 hover:bg-white hover:border-blue-500 border border-slate-200 p-1 rounded-md text-slate-600" 
               />
             </div>
@@ -123,6 +177,7 @@ function UsersIndex() {
               <Select 
                 options={roles} 
                 onChange={handleRoleChange}
+                value={createUser.role}
               />
             </div>
           </div>
@@ -136,6 +191,7 @@ function UsersIndex() {
                 type="password" 
                 name="password"
                 onChange={handleInputChange}
+                value={createUser.password}
                 className="bg-slate-100 hover:bg-white hover:border-blue-500 border border-slate-200 p-1 rounded-md text-slate-600" 
               />
             </div>
@@ -147,6 +203,7 @@ function UsersIndex() {
                 type="password" 
                 name="confirm_password"
                 onChange={handleInputChange}
+                value={createUser.confirm_password}
                 className="bg-slate-100 hover:bg-white hover:border-blue-500 border border-slate-200 p-1 rounded-md text-slate-600" 
               />
             </div>
@@ -160,7 +217,7 @@ function UsersIndex() {
             <RiDeleteBinLine /> {isEditOn ? "Cancel" : "Clear"}
           </button>
           <button
-            onClick={() => { console.log(createUser) }}
+            onClick={handleSubmit}
             className="bg-teal-500 text-white px-3 py-1 rounded-md flex items-center gap-x-1"
           >
             <SiTicktick /> {isEditOn ? "Update" : "Add"}
@@ -170,7 +227,36 @@ function UsersIndex() {
       <hr className="mb-2 text-slate-700" />
       <div className="space-y-5">
         <div className="p-4">
-          <Table dataSource={dataSource} columns={columns} />;
+          {checkedRows.length > 0 && (
+            <div className="text-sm flex gap-x-2 justify-end my-5">
+              <button
+                onClick={() => {
+                  onEdit(checkedRows);
+                  setIsEditOn(true);
+                }}
+                disabled={checkedRows.length !== 1}
+                className="p-1 px-3 bg-gray-200 rounded-md disabled:bg-gray-100"
+              >
+                Edit
+              </button>
+
+              <button
+                disabled={checkedRows.length !== 1}
+                onClick={showModal}
+                className="p-1 px-3 bg-gray-200 rounded-md disabled:bg-gray-100"
+              >
+                Delete
+              </button>
+            </div>
+          )}
+          <Table
+            rowSelection={{
+              type: selectionType,
+              ...rowSelection,
+            }}
+            dataSource={userData} 
+            columns={columns} 
+          />;
         </div>
       </div>
     </Layout>

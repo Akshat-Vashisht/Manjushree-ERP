@@ -5,11 +5,11 @@ import { Table, Dropdown, Menu } from "antd";
 
 const Reports = () => {
   const tabs = ["All", "At Manjushree", "Client Wise", "Vendor Wise"];
-  const [active, setActive] = useState(null);
+  const [active, setActive] = useState(0);
   const [allData, setAllData] = useState([[], [], [], []]);
   const [allOptions, setAllOptions] = useState([[], []]);
   const [options, setOptions] = useState([]);
-  const [selectedOption, setSelectedOption] = useState(["", ""]);
+  const [selectedOption, setSelectedOption] = useState(["All", "All"]);
   const [dataSource, setDataSource] = useState([]);
   const [columns, setColumns] = useState([]);
 
@@ -81,7 +81,6 @@ const Reports = () => {
         newData[2] = res.data;
         return newData;
       });
-      setDataSource(res.data);
     } catch (error) {
       console.error("ERR::GET::ALL");
     }
@@ -97,7 +96,6 @@ const Reports = () => {
         newData[3] = res.data;
         return newData;
       });
-      setDataSource(res.data);
     } catch (error) {
       console.error("ERR::GET::ALL");
     }
@@ -135,9 +133,9 @@ const Reports = () => {
     );
   }, [dataSource]);
   useEffect(() => {
-    console.log("dataSource", dataSource);
-  }, [dataSource])
-  
+    setDataSource(allData[active] || 0);
+  }, [allData]);
+
 
   const menu = (
     <Menu
@@ -190,7 +188,11 @@ const Reports = () => {
         </Dropdown>
       ) : null}
       {active !== null ? (
-        <Table dataSource={dataSource} columns={columns}  pagination={{ pageSize: 5 }} />
+        <Table
+          dataSource={dataSource}
+          columns={columns}
+          pagination={{ pageSize: 5 }}
+        />
       ) : (
         <h1 className="text-center text-sm my-4">Select a Tab</h1>
       )}

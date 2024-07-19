@@ -53,7 +53,7 @@ const Navbar = () => {
 
   return (
     <div className="py-4 px-6 rounded-md fixed w-full bg-white top-0 shadow-md flex justify-between z-40">
-      <h1 className="font-semibold text-xl text-slate-800"> Pago People</h1>
+      <h1 className="font-semibold text-xl text-slate-800"> Manjushree</h1>
       <div className="flex justify-end text-sm ">
         <Popup
           menuList={menuList}

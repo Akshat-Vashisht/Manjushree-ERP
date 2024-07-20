@@ -20,6 +20,7 @@ from .api.pick_list_details.router import router as pick_list_details_router
 from .auth.router import router as auth_router
 from .api.dashboard.router import router as dashboard_router
 from .api.user_master.router import router as user_master_router
+from .api.business_entity_master.router import router as business_entity_router
 
 from .database import engine
 from .models import Base
@@ -37,6 +38,7 @@ app.include_router(pick_list_details_router)
 app.include_router(auth_router)
 app.include_router(dashboard_router)
 app.include_router(user_master_router)
+app.include_router(business_entity_router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[

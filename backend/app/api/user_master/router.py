@@ -2,7 +2,7 @@ from typing import List
 from fastapi import APIRouter, Depends, status
 from ...utils import get_db
 from .handler import fetch_users, add_user, update_user, soft_delete
-from .schemas import UserResponse, UserCreateSchema
+from .schemas import UserResponse, UserCreateSchema, UserUpdateSchema
 
 router = APIRouter(
     prefix='/users',
@@ -17,10 +17,10 @@ def list_of_users(db = Depends(get_db)):
 def create_user(user_input: UserCreateSchema, db = Depends(get_db)):
     return add_user(db, user_input)
 
-@router.patch('/', status_code=status.HTTP_200_OK, response_model=UserResponse)
-def update_user_details(user_input: UserCreateSchema, db = Depends(get_db)):
-    return update_user(db, user_input)
-
 @router.patch('/{id}', status_code=status.HTTP_200_OK, response_model=UserResponse)
+def update_user_details(id: int, user_input: UserUpdateSchema, db = Depends(get_db)):
+    return update_user(db, id, user_input)
+
+@router.delete('/{id}', status_code=status.HTTP_200_OK)
 def soft_delete_user(id: int, db = Depends(get_db)):
-    pass
+    return soft_delete(db, id)

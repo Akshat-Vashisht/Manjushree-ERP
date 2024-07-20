@@ -24,8 +24,8 @@ def fetch_users(db: Session):
     users = db.query(UserMaster).all()
     return users
 
-def update_user(db: Session, user_input: UserUpdateSchema):
-    user = fetch_data(db, UserMaster, 'user_master_id', user_input.id)
+def update_user(db: Session, id: int, user_input: UserUpdateSchema):
+    user = fetch_data(db, UserMaster, 'user_master_id', id)
 
     user.user_code = user_input.user_code
     user.user_name = user_input.user_name
@@ -41,20 +41,15 @@ def update_user(db: Session, user_input: UserUpdateSchema):
 
     return user
 
-def soft_delete(db: Session, id: int, last_updated_by: int):
-    data = {
-        "is_active": False,
-        "last_updated_by": last_updated_by,
-        "last_updated_dt": datetime.datetime.now(datetime.UTC)
-    }
+def soft_delete(db: Session, id: int):
+    user = db.get(UserMaster, id)
 
-    stmt = (
-        update(UserMaster)
-            .where(UserMaster.user_master_id == id)
-            .values(**data)
-    )
+    user.is_active = False
 
-    db.execute(stmt)
+    db.add(user)
+    db.commit()
+
+    return {"deleted": True}
     
 
 

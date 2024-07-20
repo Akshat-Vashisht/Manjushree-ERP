@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Layout from '../../components/Layout'
-import { Select, Table } from 'antd';
+import { Modal, Select, Table } from 'antd';
 import { SiTicktick } from 'react-icons/si';
 import { RiDeleteBinLine } from 'react-icons/ri';
 import { axiosConfig } from '../../axios/axiosConfig';
@@ -70,6 +70,17 @@ function UsersIndex() {
       title: "Role",
       dataIndex: "role",
       render: (role) => getRoleName(role)
+    },
+    {
+      title: "Active",
+      dataIndex: "is_active",
+      render: (active) => active ? (<div
+        title="active"
+        className="w-3 h-3 bg-teal-500 rounded-full mx-auto"
+      ></div>) : (<div
+        title="inactive"
+        className="w-3 h-3 bg-red-500 rounded-full mx-auto"
+      ></div>)
     }
   ]
 
@@ -89,7 +100,6 @@ function UsersIndex() {
 
   const getAllUsers = async () => {
     const res = await axiosConfig.get('/users/');
-    console.log(res.data);
 
     const data = res.data.sort((a, b) => a.user_master_id - b.user_master_id)
                   .map((user) => ({
@@ -117,17 +127,52 @@ function UsersIndex() {
     try {
       let res;
 
-      res = await axiosConfig.post('/users/', createUser);
+      if(!isEditOn) {
+        res = await axiosConfig.post('/users/', createUser);
+      } else {
+        // return console.log(`/users/${checkedRows[0].user_master_id}`);
+        res = await axiosConfig.patch(`/users/${checkedRows[0].user_master_id}`, createUser);
+      }
 
-      if(res.status === 201) {
-        toast.success(`User created successfully`)
+      if (res.status === 201) {
+        toast.success(`User created!`);
+      } else if (res.status === 200 && isEditOn) {
+        toast.success(`${checkedRows[0].user_code} updated!`);
       }
       
       handleClear();
       await getAllUsers();
     } catch(error) {
+      console.error("ERR::POST::CONTAINER");
+      toast.error("Something went wrong");
     }
   }
+
+  const onDelete = async (container) => {
+    const { user_master_id } = container[0];
+    try {
+      const res = await axiosConfig.delete(
+        // `/users/${user_master_id}?last_updated_by=${last_updated_by}`
+        `/users/${user_master_id}`
+      );
+      getAllUsers();
+      if (res.status === 204) {
+        toast.success(`${checkedRows[0].user_code} deleted!`);
+      }
+    } catch (error) {
+      console.error("ERR::PATCH::CONTAINER", error);
+      toast.error("Something went wrong");
+    }
+  };
+
+  const handleOk = () => {
+    onDelete(checkedRows);
+    setIsModalOpen(false);
+
+  };
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
 
   useEffect(() => {
     getAllUsers();
@@ -152,7 +197,21 @@ function UsersIndex() {
                 name="user_code"
                 onChange={handleInputChange}
                 value={createUser.user_code}
+                className="bg-slate-100 hover:bg-white hover:border-blue-500 border border-slate-200 p-1 rounded-md text-slate-600"
+                tabIndex={1} 
+              />
+            </div>
+            <div className="flex flex-col gap-y-2">
+              <label htmlFor="" className="text-sm font-medium">
+                Password
+              </label>
+              <input 
+                type="password" 
+                name="password"
+                onChange={handleInputChange}
+                value={createUser.password}
                 className="bg-slate-100 hover:bg-white hover:border-blue-500 border border-slate-200 p-1 rounded-md text-slate-600" 
+                tabIndex={4}
               />
             </div>
           </div>
@@ -168,31 +227,7 @@ function UsersIndex() {
                 onChange={handleInputChange}
                 value={createUser.user_name}
                 className="bg-slate-100 hover:bg-white hover:border-blue-500 border border-slate-200 p-1 rounded-md text-slate-600" 
-              />
-            </div>
-            <div className="flex flex-col gap-y-2">
-              <label htmlFor="" className="text-sm font-medium">
-                Role
-              </label>
-              <Select 
-                options={roles} 
-                onChange={handleRoleChange}
-                value={createUser.role}
-              />
-            </div>
-          </div>
-          <div className="flex flex-col gap-y-4">
-            {/* Col-3 Fields go here */}
-            <div className="flex flex-col gap-y-2">
-              <label htmlFor="" className="text-sm font-medium">
-                Password
-              </label>
-              <input 
-                type="password" 
-                name="password"
-                onChange={handleInputChange}
-                value={createUser.password}
-                className="bg-slate-100 hover:bg-white hover:border-blue-500 border border-slate-200 p-1 rounded-md text-slate-600" 
+                tabIndex={2}
               />
             </div>
             <div className="flex flex-col gap-y-2">
@@ -205,6 +240,21 @@ function UsersIndex() {
                 onChange={handleInputChange}
                 value={createUser.confirm_password}
                 className="bg-slate-100 hover:bg-white hover:border-blue-500 border border-slate-200 p-1 rounded-md text-slate-600" 
+                tabIndex={5}
+              />
+            </div>
+          </div>
+          <div className="flex flex-col gap-y-4">
+            {/* Col-3 Fields go here */}
+            <div className="flex flex-col gap-y-2">
+              <label htmlFor="" className="text-sm font-medium">
+                Role
+              </label>
+              <Select 
+                options={roles} 
+                onChange={handleRoleChange}
+                value={createUser.role}
+                tabIndex={3}
               />
             </div>
           </div>
@@ -213,12 +263,14 @@ function UsersIndex() {
           <button
             onClick={() => {}}
             className="bg-red-500 text-white px-3 py-1 rounded-md flex items-center gap-x-1"
+            tabIndex={6}
           >
             <RiDeleteBinLine /> {isEditOn ? "Cancel" : "Clear"}
           </button>
           <button
             onClick={handleSubmit}
             className="bg-teal-500 text-white px-3 py-1 rounded-md flex items-center gap-x-1"
+            tabIndex={7}
           >
             <SiTicktick /> {isEditOn ? "Update" : "Add"}
           </button>
@@ -257,6 +309,7 @@ function UsersIndex() {
             dataSource={userData} 
             columns={columns} 
           />;
+          <Modal title="Delete User" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}></Modal>
         </div>
       </div>
     </Layout>

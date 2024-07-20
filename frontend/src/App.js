@@ -7,6 +7,7 @@ import ProtectedRoute from "./utils/ProtectedRoute";
 import AdminDashboard from "./pages/AdminDashboard";
 import useUserUtility from "./utils/useUserUtility";
 import UsersIndex from "./pages/User/Index";
+import SKUIndex from "./pages/SKU/Index";
 
 function App() {
   useUserUtility();
@@ -37,6 +38,14 @@ function App() {
           element={
           <ProtectedRoute>
             <UsersIndex />
+          </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/1/sku-master" 
+          element={
+          <ProtectedRoute>
+            <SKUIndex />
           </ProtectedRoute>
           } 
         />

@@ -261,7 +261,7 @@ function UsersIndex() {
         </div>
         <div className="flex justify-end gap-x-5">
           <button
-            onClick={() => {}}
+            onClick={handleClear}
             className="bg-red-500 text-white px-3 py-1 rounded-md flex items-center gap-x-1"
             tabIndex={6}
           >

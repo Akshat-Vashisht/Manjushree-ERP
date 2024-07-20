@@ -1,3 +1,7 @@
 1. Implementing Authorization in backend?
 
 2. User code to be automated or not?
+
+3. Id constraints mentioned in the excel file to be implemented or not.
+
+4. Authentication for api

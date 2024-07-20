@@ -32,7 +32,14 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route exact path="/users" element={<UsersIndex />} />
+        <Route 
+          path="/1/user-master" 
+          element={
+          <ProtectedRoute>
+            <UsersIndex />
+          </ProtectedRoute>
+          } 
+        />
       </Routes>
     </Router>
   );

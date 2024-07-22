@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from .handler import fetch_business_entities, add_business_entity
+from .handler import _list_of_business_entities, _create_business_entity, _update_business_entity, _soft_delete_business_entity
 from ...utils import get_db
-from .schemas import BusinessEntitySchema, BusinessEntityCreateSchema
+from ...exceptions import unique_validations_fail_exception, not_found_exception
+from .schemas import BusinessEntitySchema, BusinessEntityCreateSchema, BusinessEntityUpdateSchema
 
 router = APIRouter(
     prefix='/business-entities',
@@ -11,17 +12,41 @@ router = APIRouter(
 
 @router.get('/')
 def list_of_business_entities(db: Session = Depends(get_db)):
-    return fetch_business_entities(db)
+    return _list_of_business_entities(db)
 
-@router.post('/')
+@router.post('/', status_code=status.HTTP_201_CREATED, response_model=BusinessEntitySchema)
 def create_business_entity(be_input: BusinessEntityCreateSchema, db: Session = Depends(get_db)):
     # TODO: Remove hardcoded last_updated_by
-    return add_business_entity(db, be_input, 1)
+    result = _create_business_entity(db, be_input, 1)
 
-@router.patch('/{id}')
-def update_business_entity(id: int, db: Session = Depends(get_db)):
-    pass
+    # Result returend integer since a record with given business_entity_name already exists
+    if isinstance(result, int) and result == 1:
+        detail = {"error": True, "message": "Business Entity with given name already exists."}
+        raise unique_validations_fail_exception(detail)
+    
+    return result
 
-@router.delete('/{id}')
+@router.patch('/{id}', response_model=BusinessEntitySchema)
+def update_business_entity(id: int, be_input: BusinessEntityUpdateSchema, db: Session = Depends(get_db)):
+    # TODO: Remove hardcoded last_updated_by
+    result = _update_business_entity(db, id, be_input, 1)
+    
+    # If not found
+    if isinstance(result, int) and result == 0:
+        detail = {"error": True, "message": "Business Entity not found."}
+        raise not_found_exception(detail)
+    
+    # Unique business_entity_name
+    if isinstance(result, int) and result == 1:
+        detail = {"error": True, "message": "Business Entity with given name already exists."}
+        raise unique_validations_fail_exception(detail)
+    
+    return result
+
+@router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT)
 def delete_business_entity(id: int, db: Session = Depends(get_db)):
-    pass
+    result = _soft_delete_business_entity(db, id, 1)
+
+    if result == 0:
+        detail = {"error": True, "message": "Business Entity not found."}
+        raise not_found_exception(detail)

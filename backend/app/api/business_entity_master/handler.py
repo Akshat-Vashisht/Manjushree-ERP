@@ -1,13 +1,27 @@
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 from ...models import BusinessEntityMaster
-from ...utils import now
-from .schemas import BusinessEntityCreateSchema, BusinessEntityUpdateSchema
+from ...utils import now, paginate
+from .schemas import BusinessEntityCreateSchema, BusinessEntityUpdateSchema, BusinessEntitySchema
 
 
-def _list_of_business_entities(db: Session):
-    entities = db.query(BusinessEntityMaster).all()
-    return entities
+def _list_of_business_entities(db: Session, page: int, page_size: int):
+    # return paginate(db.query(BusinessEntityMaster), BusinessEntitySchema, page, page_size)
+    offset = page_size * (page - 1)
+    
+    _query = db.query(BusinessEntityMaster)
+
+    record_count = _query.count()
+
+    pagination = {
+        "total_pages": record_count / page_size,
+        "current_page": page,
+        "total_records": record_count,
+        "records": [BusinessEntitySchema.model_validate(each) for each in _query.offset(offset).limit(page_size)]
+    }
+
+    return pagination
+    
 
 def _create_business_entity(db: Session, be_input: BusinessEntityCreateSchema, last_updated_by: int):
     # Check for unique business_entity_name

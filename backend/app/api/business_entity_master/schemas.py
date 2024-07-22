@@ -23,6 +23,9 @@ class BusinessEntitySchema(BaseModel):
     last_updated_dt: datetime
     last_updated_by: int
 
+    class Config:
+        from_attributes = True
+
 class BusinessEntityCreateSchema(BaseModel):
     business_entity_code: str = Field(max_length=10)
     business_entity_name: str = Field(max_length=100)

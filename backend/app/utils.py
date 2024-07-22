@@ -1,6 +1,10 @@
+from sqlalchemy.orm import Session
 from .exceptions import DataNotFoundError
 from .database import SessionLocal
 from datetime import datetime
+from pydantic import BaseModel
+
+from math import ceil
 
 def get_db():
     db = SessionLocal()
@@ -23,3 +27,30 @@ def now(timezone: str = "Asia/Kolkata", return_string: bool = False, time_format
         return now.strftime(time_format)
     
     return now
+
+# Paginate records for a given query
+def paginate(query: any, schema: BaseModel, page: int = 1, page_size: int = 10):
+    offset = page_size * (page - 1)
+
+    return query
+
+    record_count = query.count()
+
+    results = query.offset(offset).limit(page_size).all()
+
+    records = []
+
+    # for x in results:
+    #     records.append(schema.model_validate(x))
+
+    page = {
+        "current_page": page,
+        "total_pages": int(ceil(record_count / page_size)),
+        "page_size": page_size,
+        "total_records": records,
+        "data": query.offset(offset).limit(page_size).all()
+    }
+
+    return page
+    
+    

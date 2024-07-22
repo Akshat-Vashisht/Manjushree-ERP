@@ -77,7 +77,7 @@ function BusinessEntityIndex() {
   const getAllBusinessEntities = async () => {
     const res = await axiosConfig.get('/business-entities/');
 
-    const data = res.data
+    const data = res.data.records
                   .sort((a, b) => a.business_entity_master_id - b.business_entity_master_id)
                   .map((businessEntity) => ({
                     ...businessEntity,

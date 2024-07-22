@@ -11,8 +11,8 @@ router = APIRouter(
 )
 
 @router.get('/')
-def list_of_business_entities(db: Session = Depends(get_db)):
-    return _list_of_business_entities(db)
+def list_of_business_entities(db: Session = Depends(get_db), page: int = 1, page_size: int = 3):
+    return _list_of_business_entities(db, page, page_size)
 
 @router.post('/', status_code=status.HTTP_201_CREATED, response_model=BusinessEntitySchema)
 def create_business_entity(be_input: BusinessEntityCreateSchema, db: Session = Depends(get_db)):

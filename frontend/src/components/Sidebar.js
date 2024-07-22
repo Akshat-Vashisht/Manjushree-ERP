@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { RxDashboard } from "react-icons/rx";
 import { GoGraph } from "react-icons/go";
-import { LuContainer, LuUserSquare, LuCaseUpper } from "react-icons/lu";
+import { LuContainer, LuUserSquare, LuCaseUpper, LuLayers } from "react-icons/lu";
 
 import { useSelector } from "react-redux";
 
@@ -60,6 +60,18 @@ const Sidebar = () => {
           >
             <LuCaseUpper className="text-xl" />
             SKUs
+        </Link>
+        
+        <Link
+          to={`/${userRole}/business-entity-master`}
+          className={`flex items-center justify-start pl-9 gap-x-2 py-3 text-center rounded-lg hover:bg-slate-700 ${
+            location.pathname == `/${userRole}/business-entity-master`
+              ? "bg-slate-700 text-white"
+              : "bg-none text-slate-200"
+          }`}
+          >
+            <LuLayers className="text-xl" />
+            Business Entities
         </Link>
 
 

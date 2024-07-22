@@ -8,6 +8,8 @@ import AdminDashboard from "./pages/AdminDashboard";
 import useUserUtility from "./utils/useUserUtility";
 import UsersIndex from "./pages/User/Index";
 import SKUIndex from "./pages/SKU/Index";
+import BusinessEntityIndex from "./pages/BusinessEntity/Index";
+import CreateBusinessEntity from "./pages/BusinessEntity/Create";
 
 function App() {
   useUserUtility();
@@ -46,6 +48,23 @@ function App() {
           element={
           <ProtectedRoute>
             <SKUIndex />
+          </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/1/business-entity-master" 
+          element={
+          <ProtectedRoute>
+            <BusinessEntityIndex />
+          </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/1/business-entity-master/create"
+          exact 
+          element={
+          <ProtectedRoute>
+            <CreateBusinessEntity />
           </ProtectedRoute>
           } 
         />

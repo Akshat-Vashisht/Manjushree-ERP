@@ -129,30 +129,38 @@ function BusinessEntityIndex() {
   
   return (
     <Layout>
-        <div className='flex flex-wrap justify-center align-center lg:justify-between'>
-          <h1 className="text-2xl p-3 font-semibold text-slate-800">
-              Business Entity Master
-          </h1>
-          <Link to={`/1/business-entity-master/create`} className='bg-slate-700 text-white font-medium rounded-lg px-4 py-0 text-sm flex items-center'>
-            Create New
-          </Link>
+      <div className="flex flex-wrap justify-center items-center lg:justify-between pr-10">
+        <h1 className="text-2xl p-3 font-semibold text-slate-800">
+          Business Entity Master
+        </h1>
+        <Link
+          to={`/1/business-entity-master/create`}
+          className="bg-slate-700 text-white font-medium rounded-lg px-4 py-2 text-sm flex items-center"
+        >
+          Create New
+        </Link>
+      </div>
+      <div className="px-5 mt-10">
+        <Table
+          dataSource={businessEntityData}
+          columns={columns}
+          pagination={false}
+        />
+        <div className="mt-4">
+          <Pagination
+            {...paginationSettings}
+            onChange={handlePaginationChange}
+          />
         </div>
-        <div className="px-5 mt-10">
-            <Table 
-              dataSource={businessEntityData}
-              columns={columns}
-              pagination={false}
-            />
-            <div className="mt-4">
-              <Pagination 
-                {...paginationSettings}
-                onChange={handlePaginationChange} 
-              />
-            </div>
-            <Modal title="Delete Business Entity?" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}></Modal>
-        </div>
+        <Modal
+          title="Delete Business Entity?"
+          open={isModalOpen}
+          onOk={handleOk}
+          onCancel={handleCancel}
+        ></Modal>
+      </div>
     </Layout>
-  )
+  );
 }
 
 export default BusinessEntityIndex

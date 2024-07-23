@@ -21,7 +21,14 @@ def _list_of_business_entities(db: Session, page: int, page_size: int):
     }
 
     return pagination
+
+def _get_business_entity(db: Session, id: int):
+    entity = db.get(BusinessEntityMaster, id)
+
+    if not entity:
+        return 0
     
+    return entity
 
 def _create_business_entity(db: Session, be_input: BusinessEntityCreateSchema, last_updated_by: int):
     # Check for unique business_entity_name

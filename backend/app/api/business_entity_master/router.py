@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from .handler import _list_of_business_entities, _create_business_entity, _update_business_entity, _soft_delete_business_entity
+from .handler import _list_of_business_entities, _create_business_entity, _update_business_entity, _soft_delete_business_entity, _get_business_entity
 from ...utils import get_db
 from ...exceptions import unique_validations_fail_exception, not_found_exception
 from .schemas import BusinessEntitySchema, BusinessEntityCreateSchema, BusinessEntityUpdateSchema
@@ -11,8 +11,18 @@ router = APIRouter(
 )
 
 @router.get('/')
-def list_of_business_entities(db: Session = Depends(get_db), page: int = 1, page_size: int = 3):
+def list_of_business_entities(db: Session = Depends(get_db), page: int = 1, page_size: int = 10):
     return _list_of_business_entities(db, page, page_size)
+
+@router.get('/{id}', response_model=BusinessEntitySchema)
+def get_business_entity(id: int, db: Session = Depends(get_db)):
+    entity = _get_business_entity(db, id)
+
+    if isinstance(entity, int) and entity == 0:
+        detail = {"error": True, "message": "Business Entity not found."}
+        raise not_found_exception(detail)
+    
+    return entity
 
 @router.post('/', status_code=status.HTTP_201_CREATED, response_model=BusinessEntitySchema)
 def create_business_entity(be_input: BusinessEntityCreateSchema, db: Session = Depends(get_db)):

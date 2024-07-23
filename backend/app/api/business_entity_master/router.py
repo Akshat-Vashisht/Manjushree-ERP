@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, File, UploadFile
 from sqlalchemy.orm import Session
 from .handler import _list_of_business_entities, _create_business_entity, _update_business_entity, _soft_delete_business_entity, _get_business_entity
 from ...utils import get_db
 from ...exceptions import unique_validations_fail_exception, not_found_exception
-from .schemas import BusinessEntitySchema, BusinessEntityCreateSchema, BusinessEntityUpdateSchema
+from .schemas import BusinessEntitySchema, BusinessEntityCreateSchema, BusinessEntityUpdateSchema, CreateForm
 
 router = APIRouter(
     prefix='/business-entities',
@@ -25,7 +25,7 @@ def get_business_entity(id: int, db: Session = Depends(get_db)):
     return entity
 
 @router.post('/', status_code=status.HTTP_201_CREATED, response_model=BusinessEntitySchema)
-def create_business_entity(be_input: BusinessEntityCreateSchema, db: Session = Depends(get_db)):
+def create_business_entity(be_input: CreateForm = Depends(), db: Session = Depends(get_db)):
     # TODO: Remove hardcoded last_updated_by
     result = _create_business_entity(db, be_input, 1)
 

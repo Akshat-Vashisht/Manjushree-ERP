@@ -24,6 +24,7 @@ function BusinessEntityForm({
   responseHandler = (res) => {},
 }) {
   const [formData, setFormData] = useState(defaultFormState);
+  const [logoFile, setLogoFile] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -32,6 +33,10 @@ function BusinessEntityForm({
       ...formData,
       [name]: value,
     });
+  };
+
+  const handleFileChange = (e) => {
+    setLogoFile(e.target.files[0]);
   };
 
   const sanitizeData = (data, direction = 1) => {
@@ -79,10 +84,25 @@ function BusinessEntityForm({
       let res;
       const cleanData = sanitizeData(formData, 2);
 
+      const _formData = new FormData();
+
+      // Object.keys(cleanData).map((key) => {
+      //   _formData.append(key, cleanData[key]);
+      // });
+
       if (id) {
         res = await axiosConfig.patch(`/business-entities/${id}`, cleanData);
       } else {
+        // if (logoFile) _formData.append("logo", logoFile);
+
+        // return console.log(_formData.values());
+
         res = await axiosConfig.post(`/business-entities/`, cleanData);
+        // res = await axiosConfig.post(`/business-entities/`, _formData, {
+        //   headers: {
+        //     "Content-Type": "multipart/form-data",
+        //   },
+        // });
       }
       responseHandler(res);
     } catch (error) {
@@ -254,7 +274,7 @@ function BusinessEntityForm({
             Logo
           </label>
           <input
-            type="text"
+            type="file"
             placeholder=""
             className={baseInputClass}
             name="logo"

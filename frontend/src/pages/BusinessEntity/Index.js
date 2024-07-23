@@ -1,21 +1,25 @@
 import Layout from '../../components/Layout'
 import React, { useState, useEffect } from 'react'
 import toast from 'react-hot-toast';
-import { Modal, Select, Table } from 'antd';
+import { Modal, Table, Pagination } from 'antd';
 import { axiosConfig } from '../../axios/axiosConfig';
-import { SiTicktick } from 'react-icons/si';
-import { RiDeleteBinLine } from 'react-icons/ri';
 import { LuTrash2, LuPencilLine } from 'react-icons/lu';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+
+const defaultPaginationSettings = {
+  align: "end",
+  defaultCurrent: 1,
+  defaultPageSize: 10,
+  hideOnSinglePage: true,
+  total: 10,
+}
 
 function BusinessEntityIndex() {
-  const [selectionType, setSelectionType] = useState("checkbox");
-  const [checkedRows, setCheckedRows] = useState([]);
-  const [isEditOn, setIsEditOn] = useState(false);
   const [businessEntityData, setBusinessEntityData] = useState([]);
   const [deleteId, setDeleteId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [paginationSettings, setPaginationSettings] = useState(defaultPaginationSettings);
 
   const columns = [
     {
@@ -68,16 +72,16 @@ function BusinessEntityIndex() {
     }
   ];
 
-  const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      setCheckedRows(selectedRows);
-    },
-  };
+  const getAllBusinessEntities = async (page = null) => {
+    const currentPage = page || paginationSettings.defaultCurrent;
 
-  const getAllBusinessEntities = async () => {
-    const res = await axiosConfig.get('/business-entities/');
+    let url = `/business-entities/?page=${currentPage}&page_size=${paginationSettings.defaultPageSize}`;
+    
+    const res = await axiosConfig.get(url);
 
-    const data = res.data.records
+    // console.log(res.data);
+
+    const records = res.data.records
                   .sort((a, b) => a.business_entity_master_id - b.business_entity_master_id)
                   .map((businessEntity) => ({
                     ...businessEntity,
@@ -85,7 +89,11 @@ function BusinessEntityIndex() {
                   }))
 
     // console.log(res);
-    setBusinessEntityData(data)
+    setBusinessEntityData(records);
+    setPaginationSettings((prev) => ({
+      ...prev,
+      total: res.data.total_records
+    }))
   }
 
   const triggerDelete = (id) => {
@@ -110,10 +118,15 @@ function BusinessEntityIndex() {
     await getAllBusinessEntities();
   }
 
+  const handlePaginationChange = async (page) => {
+    await getAllBusinessEntities(page);
+  }
+
   useEffect(() => {
     getAllBusinessEntities();
-  }, [])
-
+  }, []);
+  
+  
   return (
     <Layout>
         <div className='flex flex-wrap justify-center align-center lg:justify-between'>
@@ -124,15 +137,18 @@ function BusinessEntityIndex() {
             Create New
           </Link>
         </div>
-        <div className="px-10 mt-5">
+        <div className="px-5 mt-10">
             <Table 
-              rowSelection={{
-                type: selectionType,
-                ...rowSelection
-              }}
               dataSource={businessEntityData}
               columns={columns}
+              pagination={false}
             />
+            <div className="mt-4">
+              <Pagination 
+                {...paginationSettings}
+                onChange={handlePaginationChange} 
+              />
+            </div>
             <Modal title="Delete Business Entity?" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}></Modal>
         </div>
     </Layout>

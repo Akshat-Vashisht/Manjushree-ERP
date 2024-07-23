@@ -243,7 +243,7 @@ function CreateBusinessEntity() {
         <hr className="mt-10" />
         <div className="flex justify-center items-center gap-x-5 p-2">
           <button type='submit' className="bg-green-600 text-white rounded-md text-sm p-2">Save</button>
-          <Link to="/" className="bg-red-600 text-white rounded-md text-sm p-2">Cancel</Link>
+          <Link to="/1/business-entity-master" className="bg-red-600 text-white rounded-md text-sm p-2">Cancel</Link>
         </div>
       </form>
       </div>

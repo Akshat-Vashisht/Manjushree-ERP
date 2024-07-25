@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { axiosConfig } from "../../axios/axiosConfig";
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import FormFieldError from "../FormFieldError";
 
 const defaultFormState = {
   business_entity_code: "",
@@ -25,6 +28,87 @@ function BusinessEntityForm({
 }) {
   const [formData, setFormData] = useState(defaultFormState);
   const [logoFile, setLogoFile] = useState(null);
+  const formik = useFormik({
+    initialValues: formInputs ? {
+      ...formInputs,
+      entity_type: 'vendor'
+    } : {
+        business_entity_code: "",
+        business_entity_name: "",
+        address: "",
+        city: "",
+        district: "",
+        state: "",
+        country: "",
+        pin: "",
+        telephone_no1: "",
+        mobile_no1: "",
+        email_id: "",
+        entity_type: "",
+    },
+    validationSchema: Yup.object({
+      business_entity_code: Yup.string()
+          .min(5, 'Min 5 characters')
+          .max(10, 'Enter maximum 10 characters')
+          .required('Business Entity Code is a required field'),
+      business_entity_name: Yup.string()
+        .max(100, 'Enter maximum 100 characters')
+        .required('Business Entity Name is a required field'),
+      address: Yup.string()
+        .max(400, 'Enter maximum 400 characters')
+        .required('Address is a required field'),
+      district: Yup.string()
+        .max(50, 'Enter maximum 50 characters'),
+      state: Yup.string()
+        .max(50, 'Enter maximum 50 characters'),
+      country: Yup.string()
+        .max(50, 'Enter maximum 50 characters'),
+      telephone_no1: Yup.string()
+        .max(20, 'Enter maximum 20 characters'),
+      mobile_no1: Yup.string()
+        .max(15, 'Enter maximum 15 characters'),
+      email_id: Yup.string()
+        .email('Enter a valid email address')
+        .max(100, 'Enter maximum 100 characters'),
+    }),
+    onSubmit: async (values) => {
+      console.log(values);
+
+      try {
+        let res;
+        
+        const cleanData = sanitizeData(values, 2);
+  
+        let entity_id = id;
+  
+        if (id) {
+          res = await axiosConfig.patch(`/business-entities/${id}`, cleanData);
+        } else {
+          res = await axiosConfig.post(`/business-entities/`, cleanData);
+          id = res.data.business_entity_id;
+        }
+  
+        // Check for logo and upload file
+        if(logoFile) {
+          const _formData = new FormData(); 
+          _formData.append('logo', logoFile);
+  
+          const logoRes = await axiosConfig.post(`/business-entities/${id}/logo`, _formData, {
+            headers: {
+              "Accept": "application/json",
+              "Content-Type": "multipart/form-data",
+            }
+          })
+  
+          console.log(logoRes);
+        }
+        responseHandler(res);
+      } catch (error) {
+        console.error(error);
+        responseHandler(error.response);
+      }
+    }
+  });
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -116,13 +200,13 @@ function BusinessEntityForm({
   };
 
   useEffect(() => {
-    if (formInputs) setFormData(sanitizeData(formInputs));
+    console.log(formik.initialValues);
   }, []);
 
   const baseInputClass =
     "bg-slate-100 hover:bg-white hover:border-blue-500 border border-slate-200 p-2 rounded-md text-slate-600";
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={formik.handleSubmit}>
       <div className="grid gap-x-5 grid-cols-2">
         {/* Col 1 */}
         <div className="flex flex-col mb-3">
@@ -133,11 +217,14 @@ function BusinessEntityForm({
             type="text"
             placeholder=""
             className={baseInputClass}
+            id="business_entity_code"
             name="business_entity_code"
-            value={formData.business_entity_code}
-            onChange={handleInputChange}
+            value={formik.values.business_entity_code}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
             required
           />
+          {formik.errors.business_entity_code && formik.touched.business_entity_code && <FormFieldError message={formik.errors.business_entity_code} />}
         </div>
         <div className="flex flex-col mb-3">
           <label htmlFor="" className="text-sm font-medium">
@@ -147,11 +234,14 @@ function BusinessEntityForm({
             type="text"
             placeholder=""
             className={baseInputClass}
+            id="business_entity_name"
             name="business_entity_name"
-            value={formData.business_entity_name}
-            onChange={handleInputChange}
+            value={formik.values.business_entity_name}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
             required
           />
+          {formik.errors.business_entity_name && formik.touched.business_entity_name && <FormFieldError message={formik.errors.business_entity_name} />}
         </div>
         <div className="flex flex-col mb-3 col-span-2">
           <label htmlFor="" className="text-sm font-medium">
@@ -161,11 +251,14 @@ function BusinessEntityForm({
             type="text"
             placeholder=""
             className={baseInputClass}
+            id="address"
             name="address"
-            value={formData.address}
-            onChange={handleInputChange}
+            value={formik.values.address}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
             required
           ></textarea>
+          {formik.errors.address && formik.touched.address && <FormFieldError message={formik.errors.address} />}
         </div>
         <div className="flex flex-col mb-3">
           <label htmlFor="" className="text-sm font-medium">
@@ -175,10 +268,13 @@ function BusinessEntityForm({
             type="text"
             placeholder=""
             className={baseInputClass}
+            id="district"
             name="district"
-            value={formData.district}
-            onChange={handleInputChange}
+            value={formik.values.district}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
           />
+          {formik.errors.district && formik.touched.district && <FormFieldError message={formik.errors.district} />}
         </div>
         <div className="flex flex-col mb-3">
           <label htmlFor="" className="text-sm font-medium">
@@ -188,10 +284,13 @@ function BusinessEntityForm({
             type="text"
             placeholder=""
             className={baseInputClass}
+            id="state"
             name="state"
-            value={formData.state}
-            onChange={handleInputChange}
-          />
+            value={formik.values.state}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            />
+            {formik.errors.state && formik.touched.state && <FormFieldError message={formik.errors.state} />}
         </div>
         <div className="flex flex-col mb-3">
           <label htmlFor="" className="text-sm font-medium">
@@ -201,11 +300,14 @@ function BusinessEntityForm({
             type="text"
             placeholder=""
             className={baseInputClass}
+            id="city"
             name="city"
-            value={formData.city}
-            onChange={handleInputChange}
+            value={formik.values.city}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
             required
           />
+          {formik.errors.city && formik.touched.city && <FormFieldError message={formik.errors.city} />}
         </div>
         <div className="flex flex-col mb-3">
           <label htmlFor="" className="text-sm font-medium">
@@ -215,11 +317,14 @@ function BusinessEntityForm({
             type="number"
             placeholder=""
             className={baseInputClass}
+            id="pin"
             name="pin"
-            value={formData.pin}
-            onChange={handleInputChange}
+            value={formik.values.pin}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
             required
           />
+          {formik.errors.pin && formik.touched.pin && <FormFieldError message={formik.errors.pin} />}
         </div>
         <div className="flex flex-col mb-3">
           <label htmlFor="" className="text-sm font-medium">
@@ -229,10 +334,13 @@ function BusinessEntityForm({
             type="text"
             placeholder=""
             className={baseInputClass}
+            id="country"
             name="country"
-            value={formData.country}
-            onChange={handleInputChange}
+            value={formik.values.country}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
           />
+          {formik.errors.country && formik.touched.country && <FormFieldError message={formik.errors.country} />}
         </div>
         <div className="flex flex-col mb-3">
           <label htmlFor="" className="text-sm font-medium">
@@ -242,10 +350,13 @@ function BusinessEntityForm({
             type="text"
             placeholder=""
             className={baseInputClass}
+            id="telephone_no1"
             name="telephone_no1"
-            value={formData.telephone_no1}
-            onChange={handleInputChange}
+            value={formik.values.telephone_no1}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
           />
+          {formik.errors.telephone_no1 && formik.touched.telephone_no1 && <FormFieldError message={formik.errors.telephone_no1} />}
         </div>
         <div className="flex flex-col mb-3">
           <label htmlFor="" className="text-sm font-medium">
@@ -255,10 +366,13 @@ function BusinessEntityForm({
             type="email"
             placeholder=""
             className={baseInputClass}
+            id="email_id"
             name="email_id"
-            value={formData.email_id}
-            onChange={handleInputChange}
+            value={formik.values.email_id}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
           />
+          {formik.errors.email_id && formik.touched.email_id && <FormFieldError message={formik.errors.email_id} />}
         </div>
         <div className="flex flex-col mb-3">
           <label htmlFor="" className="text-sm font-medium">
@@ -268,12 +382,16 @@ function BusinessEntityForm({
             type="text"
             placeholder=""
             className={baseInputClass}
+            id="mobile_no1"
             name="mobile_no1"
-            value={formData.mobile_no1}
-            onChange={handleInputChange}
+            value={formik.values.mobile_no1}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
           />
+          {formik.errors.mobile_no1 && formik.touched.mobile_no1 && <FormFieldError message={formik.errors.mobile_no1} />}
         </div>
-        <div className="flex flex-col mb-3 col-span-2">
+
+        {/* <div className="flex flex-col mb-3 col-span-2">
           <label htmlFor="" className="text-sm font-medium">
             Logo
           </label>
@@ -283,9 +401,9 @@ function BusinessEntityForm({
             className={baseInputClass}
             name="logo"
             value={formData.logo}
-            onChange={handleInputChange}
+            onChange={formik.handleChange}
           />
-        </div>
+        </div> */}
         {/* Col 3 wide */}
         <div className="col-span-2 mt-6">
           <label htmlFor="">Business Entity Type *</label>
@@ -296,9 +414,9 @@ function BusinessEntityForm({
                 name="entity_type"
                 id="entity_type_client"
                 value={"client"}
-                required
-                onChange={handleInputChange}
-                checked={formData.entity_type === "client"}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                //checked={formData.entity_type === "client"}
               />
               <label htmlFor="entity_type_client" className="ml-4">
                 Client
@@ -310,9 +428,9 @@ function BusinessEntityForm({
                 name="entity_type"
                 id="entity_type_vendor"
                 value={"vendor"}
-                required
-                onChange={handleInputChange}
-                checked={formData.entity_type === "vendor"}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                //checked={formData.entity_type === "vendor"}
               />
               <label htmlFor="entity_type_vendor" className="ml-4">
                 Vendor
@@ -324,14 +442,15 @@ function BusinessEntityForm({
                 name="entity_type"
                 id="entity_type_transporter"
                 value={"transporter"}
-                required
-                onChange={handleInputChange}
-                checked={formData.entity_type === "transporter"}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                //checked={formData.entity_type === "transporter"}
               />
               <label htmlFor="entity_type_transporter" className="ml-4">
                 Transporter
               </label>
             </div>
+            {formik.errors.entity_type && formik.touched.entity_type && <FormFieldError message={formik.errors.entity_type} />}
           </div>
         </div>
       </div>

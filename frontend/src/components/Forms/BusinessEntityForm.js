@@ -82,27 +82,31 @@ function BusinessEntityForm({
 
     try {
       let res;
+      
       const cleanData = sanitizeData(formData, 2);
 
-      const _formData = new FormData();
-
-      // Object.keys(cleanData).map((key) => {
-      //   _formData.append(key, cleanData[key]);
-      // });
+      let entity_id = id;
 
       if (id) {
         res = await axiosConfig.patch(`/business-entities/${id}`, cleanData);
       } else {
-        // if (logoFile) _formData.append("logo", logoFile);
-
-        // return console.log(_formData.values());
-
         res = await axiosConfig.post(`/business-entities/`, cleanData);
-        // res = await axiosConfig.post(`/business-entities/`, _formData, {
-        //   headers: {
-        //     "Content-Type": "multipart/form-data",
-        //   },
-        // });
+        id = res.data.business_entity_id;
+      }
+
+      // Check for logo and upload file
+      if(logoFile) {
+        const _formData = new FormData(); 
+        _formData.append('logo', logoFile);
+
+        const logoRes = await axiosConfig.post(`/business-entities/${id}/logo`, _formData, {
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "multipart/form-data",
+          }
+        })
+
+        console.log(logoRes);
       }
       responseHandler(res);
     } catch (error) {

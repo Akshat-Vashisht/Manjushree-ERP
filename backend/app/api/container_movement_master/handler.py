@@ -60,7 +60,7 @@ def set_container_movement_values(container_movement, values, container_movement
     container_movement.pick_list_master_id = values[
         'pick_list'].pick_list_master_id if values['pick_list'] else None
     container_movement.container_category = values['container_category'].container_category
-    container_movement.container_code = values['container_category'].container_category_code
+    container_movement.container_code = values['container'].container_code
     container_movement.location_code = values['location'].location_code
     container_movement.location_name = values['location'].location_name
     container_movement.location_display_text = values['location'].location_display_text

@@ -1,5 +1,8 @@
 import datetime
+from sqlalchemy import desc
 from sqlalchemy.orm import Session
+
+from ...exceptions import DataNotFoundError
 from .schemas import ContainerMovementCreateSchema
 from ...models import ContainerCategoryMaster, ContainerMaster, ContainerMovement, ContainerMovementHistory, SKUMaster, BusinessEntityMaster, PickListMaster, ScanLocationMaster, RFIDReaderMaster
 from ...utils import fetch_data
@@ -11,7 +14,7 @@ def get_values(db: Session, container_movement_input: ContainerMovementCreateSch
 
     container_category = fetch_data(
         db, ContainerCategoryMaster, 'container_category_master_id', container.container_category_master_id)
-    
+
     location = fetch_data(db, ScanLocationMaster, 'scan_location_master_id',
                           container_movement_input.scan_location_master_id)
 
@@ -23,18 +26,15 @@ def get_values(db: Session, container_movement_input: ContainerMovementCreateSch
         sku = fetch_data(db, SKUMaster, 'sku_master_id',
                          container_movement_input.sku_master_id)
 
-
     business_entity = None
     if container_movement_input.business_entity_master_id:
         business_entity = fetch_data(db, BusinessEntityMaster, 'business_entity_master_id',
                                      container_movement_input.business_entity_master_id)
 
-
     pick_list = None
     if container_movement_input.pick_list_master_id:
         pick_list = fetch_data(db, PickListMaster, 'pick_list_master_id',
                                container_movement_input.pick_list_master_id)
-
 
     values = {
         'container': container,
@@ -102,7 +102,7 @@ def update_container(db: Session, container_movement_input: ContainerMovementCre
 
 
 def upsert_container_movement(db: Session, container_movement_input: ContainerMovementCreateSchema):
-    
+
     container_movement = db.query(ContainerMovement).filter(
         ContainerMovement.container_master_id == container_movement_input.container_master_id).first()
 
@@ -149,7 +149,30 @@ def delete_container_movement(db: Session, container_master_id: int):
     # If the container hasn't been scanned
     if not container_movement:
         return
-    
+
     db.delete(container_movement)
     db.commit()
     return container_movement
+
+
+def get_all_values(db: Session):
+    container_movement = db.query(ContainerMovement).order_by(
+        desc(ContainerMovement.scanning_dt)).all()
+    return container_movement
+
+
+def get_history(db: Session, container_code: str | None = None, rfid_tag_no: str | None = None):
+    if rfid_tag_no:
+        print('rfid_tag_no', rfid_tag_no)
+        container_movement_history = db.query(ContainerMovementHistory).order_by(
+            desc(ContainerMovementHistory.transaction_dt)).filter(ContainerMovementHistory.rfid_tag_no == rfid_tag_no).all()
+        if not container_movement_history:
+            raise DataNotFoundError('RFID Tag No', rfid_tag_no)
+    else:
+        print('container_code', container_code)
+        container_movement_history = db.query(ContainerMovementHistory).order_by(
+            desc(ContainerMovementHistory.transaction_dt)).filter(ContainerMovementHistory.container_code == container_code).all()
+        if not container_movement_history:
+            raise DataNotFoundError('Container Code', container_code)
+
+    return container_movement_history

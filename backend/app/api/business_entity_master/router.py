@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException, status, File, UploadFile
+from fastapi import APIRouter, Depends, HTTPException, status, File, UploadFile, Form
 from sqlalchemy.orm import Session
-from .handler import _list_of_business_entities, _create_business_entity, _update_business_entity, _soft_delete_business_entity, _get_business_entity
+from .handler import _list_of_business_entities, _create_business_entity, _update_business_entity, _soft_delete_business_entity, _get_business_entity, _upload_logo
 from ...utils import get_db
 from ...exceptions import unique_validations_fail_exception, not_found_exception
 from .schemas import BusinessEntitySchema, BusinessEntityCreateSchema, BusinessEntityUpdateSchema, CreateForm
+from typing import Annotated, Union, Optional
 
 router = APIRouter(
     prefix='/business-entities',
@@ -25,7 +26,10 @@ def get_business_entity(id: int, db: Session = Depends(get_db)):
     return entity
 
 @router.post('/', status_code=status.HTTP_201_CREATED, response_model=BusinessEntitySchema)
-def create_business_entity(be_input: CreateForm = Depends(), db: Session = Depends(get_db)):
+def create_business_entity(
+    be_input: BusinessEntityCreateSchema, 
+    db: Session = Depends(get_db),
+):
     # TODO: Remove hardcoded last_updated_by
     result = _create_business_entity(db, be_input, 1)
 
@@ -60,3 +64,17 @@ def delete_business_entity(id: int, db: Session = Depends(get_db)):
     if result == 0:
         detail = {"error": True, "message": "Business Entity not found."}
         raise not_found_exception(detail)
+
+@router.post('/{id}/logo')    
+def upload_logo(id: int, logo: UploadFile, db: Session = Depends(get_db)):
+    try:
+        result = _upload_logo(db, id, logo, 1)
+        
+        if result == 0:
+            detail = {"error": True, "message": "Business entity not found"}
+            raise not_found_exception()
+
+        if result == 1:
+            return {"error": False, "message": "Logo uploaded successfully"}
+    except Exception:
+        return {"error": True, "message": "Logo upload failed, please try again later"}

@@ -3,7 +3,8 @@ from sqlalchemy.orm import Session
 from ...models import BusinessEntityMaster
 from ...utils import now, paginate
 from .schemas import BusinessEntityCreateSchema, BusinessEntityUpdateSchema, BusinessEntitySchema,CreateForm
-
+from fastapi import UploadFile, File
+from typing import Annotated, Optional, Union
 
 def _list_of_business_entities(db: Session, page: int, page_size: int):
     # return paginate(db.query(BusinessEntityMaster), BusinessEntitySchema, page, page_size)
@@ -29,8 +30,7 @@ def _get_business_entity(db: Session, id: int):
         return 0
     
     return entity
-
-def _create_business_entity(db: Session, be_input: CreateForm, last_updated_by: int):
+def _create_business_entity(db: Session, be_input: BusinessEntityCreateSchema, last_updated_by: int):
     # Check for unique business_entity_name
     exists = (
         db.query(func.count())
@@ -42,17 +42,16 @@ def _create_business_entity(db: Session, be_input: CreateForm, last_updated_by: 
     if exists > 0:
         return 1
     
-    # data = be_input.model_dump()
-    data = be_input.to_dict()
+    data = be_input.model_dump()
+    # data = be_input
 
     data.update({
-        'logo': be_input.logo.file.read(),
         'last_updated_dt': now(return_string=True),
         'last_updated_by': last_updated_by
     })
 
     entity = BusinessEntityMaster(**data)
-
+    
     db.add(entity)
     db.commit()
 
@@ -113,6 +112,28 @@ def _soft_delete_business_entity(
         return 0
     
     entity.is_active = False
+    entity.last_updated_by = last_updated_by
+    entity.last_updated_dt = now(return_string=True)
+
+    db.add(entity)
+    db.commit()
+
+    return 1
+
+def _upload_logo(
+    db: Session, 
+    id: int, 
+    logo: UploadFile,
+    last_updated_by: int
+):
+    entity = _get_business_entity(db, id)
+
+    if isinstance(entity, int) and entity == 0:
+        return 0
+
+    content = logo.file.read()
+
+    entity.logo = content
     entity.last_updated_by = last_updated_by
     entity.last_updated_dt = now(return_string=True)
 

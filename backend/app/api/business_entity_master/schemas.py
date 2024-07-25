@@ -1,6 +1,6 @@
 from pydantic import BaseModel, constr, Field
 from datetime import datetime
-from typing import Optional, Type
+from typing import Optional, Type, Union, Annotated
 import inspect
 
 from fastapi import Form, UploadFile, File
@@ -18,7 +18,7 @@ class BusinessEntitySchema(BaseModel):
     telephone_no1: Optional[str] = None
     mobile_no1: Optional[str] = None
     email_id: Optional[str] = None
-    logo: Optional[bytes] = None
+    # logo: Optional[bytes] = None
     is_client: bool
     is_vendor: bool
     is_transporter: bool
@@ -77,7 +77,7 @@ class CreateForm:
         telephone_no1: Optional[str] = Form(max_length=20, default=None),
         mobile_no1: Optional[str] = Form(max_length=15, default=None),
         email_id: Optional[str] = Form(max_length=100, default=None),
-        logo: UploadFile = File(None),
+        # logo = Annotated[bytes, File()],
         is_client: bool = Form(default=False),
         is_vendor: bool = Form(default=False),
         is_transporter: bool = Form(default=False),
@@ -93,7 +93,7 @@ class CreateForm:
         self.telephone_no1 = telephone_no1
         self.mobile_no1 = mobile_no1
         self.email_id = email_id
-        self.logo = logo
+        # self.logo = logo
         self.is_client = is_client
         self.is_vendor = is_vendor
         self.is_transporter = is_transporter

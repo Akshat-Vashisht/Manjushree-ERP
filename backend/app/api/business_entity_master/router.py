@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status, File, UploadFile, Form
 from sqlalchemy.orm import Session
 from .handler import _list_of_business_entities, _create_business_entity, _update_business_entity, _soft_delete_business_entity, _get_business_entity, _upload_logo
-from ...utils import get_db
+from ...utils import get_db, UploadHelper
 from ...exceptions import unique_validations_fail_exception, not_found_exception
 from .schemas import BusinessEntitySchema, BusinessEntityCreateSchema, BusinessEntityUpdateSchema, CreateForm
 from typing import Annotated, Union, Optional
+
 
 router = APIRouter(
     prefix='/business-entities',
@@ -65,16 +66,24 @@ def delete_business_entity(id: int, db: Session = Depends(get_db)):
         detail = {"error": True, "message": "Business Entity not found."}
         raise not_found_exception(detail)
 
-@router.post('/{id}/logo')    
-def upload_logo(id: int, logo: UploadFile, db: Session = Depends(get_db)):
-    try:
-        result = _upload_logo(db, id, logo, 1)
-        
-        if result == 0:
-            detail = {"error": True, "message": "Business entity not found"}
-            raise not_found_exception()
+# @router.post('/{id}/logo')    
+# async def upload_logo(
+#     id: int, 
+#     logo: UploadFile,
+#     db: Session = Depends(get_db)
+# ):
+    # return os.path.abspath(os.path.join(os.getcwd(), os.pardir))
 
-        if result == 1:
-            return {"error": False, "message": "Logo uploaded successfully"}
-    except Exception:
-        return {"error": True, "message": "Logo upload failed, please try again later"}
+    # return contents.decode()
+    # try:
+        # result = await _upload_logo(db, id, logo, 1)
+        
+        # if result == 0:
+        #     detail = {"error": True, "message": "Business entity not found"}
+        #     raise not_found_exception()
+
+        # if result == 1:
+        #     return {"error": False, "message": "Logo uploaded successfully"}
+    # except Exception:
+    #     print(Exception)
+    #     return {"error": True, "message": "Logo upload failed, please try again later"}

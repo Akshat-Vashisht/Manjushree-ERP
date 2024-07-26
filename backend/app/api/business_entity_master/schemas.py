@@ -18,7 +18,7 @@ class BusinessEntitySchema(BaseModel):
     telephone_no1: Optional[str] = None
     mobile_no1: Optional[str] = None
     email_id: Optional[str] = None
-    # logo: Optional[bytes] = None
+    logo: Optional[bytes] = None
     is_client: bool
     is_vendor: bool
     is_transporter: bool

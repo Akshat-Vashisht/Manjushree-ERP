@@ -5,6 +5,8 @@ from ...utils import now, paginate
 from .schemas import BusinessEntityCreateSchema, BusinessEntityUpdateSchema, BusinessEntitySchema,CreateForm
 from fastapi import UploadFile, File
 from typing import Annotated, Optional, Union
+import os
+import shutil
 
 def _list_of_business_entities(db: Session, page: int, page_size: int):
     # return paginate(db.query(BusinessEntityMaster), BusinessEntitySchema, page, page_size)
@@ -120,24 +122,31 @@ def _soft_delete_business_entity(
 
     return 1
 
-def _upload_logo(
+# Abandoned temporarily till file issue is resolved
+async def _upload_logo(
     db: Session, 
     id: int, 
     logo: UploadFile,
-    last_updated_by: int
+    last_updated_by: int,
 ):
     entity = _get_business_entity(db, id)
 
     if isinstance(entity, int) and entity == 0:
         return 0
 
-    content = logo.file.read()
+    location = os.path.join('uploads', logo.filename)
+    # content = await logo.read()
 
-    entity.logo = content
-    entity.last_updated_by = last_updated_by
-    entity.last_updated_dt = now(return_string=True)
+    with open(location, 'wb') as f:
+        f.write(logo.file.read())
 
-    db.add(entity)
-    db.commit()
+    # await logo.write(content)
+
+    # entity.logo = content
+    # entity.last_updated_by = last_updated_by
+    # entity.last_updated_dt = now(return_string=True)
+
+    # db.add(entity)
+    # db.commit()
 
     return 1

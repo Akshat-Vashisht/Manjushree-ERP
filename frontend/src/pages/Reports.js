@@ -136,7 +136,6 @@ const Reports = () => {
     setDataSource(allData[active] || 0);
   }, [allData]);
 
-
   const menu = (
     <Menu
       items={options.map((option) => ({
@@ -158,6 +157,7 @@ const Reports = () => {
       <h1 className="font-semibold text-lg mb-5">
         {tabs[active] ? tabs[active] + " Containers Detail" : ""}
       </h1>
+      <hr className="mb-2 text-slate-700" />
       <div className="flex gap-x-5 text-sm my-4">
         {tabs.map((item, index) => (
           <span

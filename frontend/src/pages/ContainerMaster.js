@@ -9,8 +9,8 @@ import Layout from "../components/Layout";
 import { axiosConfig } from "../axios/axiosConfig";
 import { useDispatch, useSelector } from "react-redux";
 
-
 const ContainerMaster = () => {
+  const user = useSelector((state) => state.user.user);
   const [selectionType, setSelectionType] = useState("checkbox");
   const [containerData, setContainerData] = useState([]);
   const [checkedRows, setCheckedRows] = useState([]);
@@ -22,7 +22,7 @@ const ContainerMaster = () => {
     container_category_master_id: null,
     container_status: "",
     rfid_tag_no: "",
-    last_updated_by: 1,
+    last_updated_by: user.master_id,
   });
 
   const categoryMap = {
@@ -97,9 +97,7 @@ const ContainerMaster = () => {
 
   const getAllCategory = async () => {
     try {
-      const res = await axiosConfig.get(
-        "/container-categories/category-id"
-      );
+      const res = await axiosConfig.get("/container-categories/category-id");
       setCategoryData(
         res.data.detail.map((item) => ({ value: item.id, label: item.name }))
       );
@@ -122,31 +120,38 @@ const ContainerMaster = () => {
   };
 
   const handleSubmit = async () => {
-    try {
-      let res;
-      if (!isEditOn)
-        res = await axiosConfig.post(
-          "/containers/",
-          createContainer
-        );
-      else
-        res = await axiosConfig.patch(
-          "/containers/",
-          createContainer
-        );
+    if (checkFields()) {
+      try {
+        let res;
+        if (!isEditOn)
+          res = await axiosConfig.post("/containers/", createContainer);
+        else res = await axiosConfig.patch("/containers/", createContainer);
 
-      console.log(res);
-      if (res.status === 201) {
-        toast.success(`${res.data.detail.container_code} created!`);
-      } else if (res.status === 204 && isEditOn) {
-        toast.success(`${checkedRows[0].container_code} updated!`);
+        console.log(res);
+        if (res.status === 201) {
+          toast.success(`${res.data.detail.container_code} created!`);
+        } else if (res.status === 204 && isEditOn) {
+          toast.success(`${checkedRows[0].container_code} updated!`);
+        }
+        getAllContainer();
+        handleClear();
+      } catch (error) {
+        console.error("ERR::POST::CONTAINER");
+        toast.error("Something went wrong");
       }
-      getAllContainer();
-      handleClear();
-    } catch (error) {
-      console.error("ERR::POST::CONTAINER");
-      toast.error("Something went wrong");
     }
+  };
+
+  const checkFields = () => {
+    if (
+      createContainer.container_category_master_id === null ||
+      createContainer.container_status === "" ||
+      createContainer.rfid_tag_no === ""
+    ) {
+      toast.error("Please fill all the fields");
+      return false;
+    }
+    return true;
   };
 
   const handleClear = () => {
@@ -155,7 +160,7 @@ const ContainerMaster = () => {
       container_category_master_id: null,
       container_status: "",
       rfid_tag_no: "",
-      last_updated_by: 1,
+      last_updated_by: user.master_id,
     });
   };
 
@@ -165,7 +170,7 @@ const ContainerMaster = () => {
       container_category_master_id: container[0].container_category_master_id,
       container_status: container[0].container_status,
       rfid_tag_no: container[0].rfid_tag_no,
-      last_updated_by: 1,
+      last_updated_by: user.master_id,
     });
   };
   const onDelete = async (container) => {
@@ -196,7 +201,6 @@ const ContainerMaster = () => {
   const handleOk = () => {
     onDelete(checkedRows);
     setIsModalOpen(false);
-
   };
   const handleCancel = () => {
     setIsModalOpen(false);
@@ -208,12 +212,10 @@ const ContainerMaster = () => {
   }, []);
 
   useEffect(() => {
-    setCreateContainer(
-      {
-        ...createContainer,
-        ["last_updated_by"]:master_id
-      }
-    )
+    setCreateContainer({
+      ...createContainer,
+      ["last_updated_by"]: master_id,
+    });
   }, [master_id]);
 
   return (
@@ -306,11 +308,17 @@ const ContainerMaster = () => {
           columns={columns}
           dataSource={containerData}
         />
-      
-              <Modal title="Delete Container" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
-        
-        <p>Are you sure you want to delete {checkedRows[0]?.container_code} ?</p>
-      </Modal>
+
+        <Modal
+          title="Delete Container"
+          open={isModalOpen}
+          onOk={handleOk}
+          onCancel={handleCancel}
+        >
+          <p>
+            Are you sure you want to delete {checkedRows[0]?.container_code} ?
+          </p>
+        </Modal>
       </div>
     </Layout>
   );

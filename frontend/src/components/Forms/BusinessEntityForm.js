@@ -70,7 +70,7 @@ function BusinessEntityForm({
   id = null,
   responseHandler = (res) => {},
 }) {
-  const [logoFile, setLogoFile] = useState(null);
+  // const [logoFile, setLogoFile] = useState(null);
   const formik = useFormik({
     initialValues: getInitialValues(formInputs),
     validationSchema: Yup.object({
@@ -106,29 +106,26 @@ function BusinessEntityForm({
         
         const cleanData = sanitizeData(values, 2);
   
-        let entity_id = id;
-  
         if (id) {
           res = await axiosConfig.patch(`/business-entities/${id}`, cleanData);
         } else {
           res = await axiosConfig.post(`/business-entities/`, cleanData);
-          id = res.data.business_entity_id;
         }
   
         // Check for logo and upload file
-        if(logoFile) {
-          const _formData = new FormData(); 
-          _formData.append('logo', logoFile);
+        // if(logoFile) {
+        //   const _formData = new FormData(); 
+        //   _formData.append('logo', logoFile);
   
-          const logoRes = await axiosConfig.post(`/business-entities/${id}/logo`, _formData, {
-            headers: {
-              "Accept": "application/json",
-              "Content-Type": "multipart/form-data",
-            }
-          })
+        //   const logoRes = await axiosConfig.post(`/business-entities/${id}/logo`, _formData, {
+        //     headers: {
+        //       "Accept": "application/json",
+        //       "Content-Type": "multipart/form-data",
+        //     }
+        //   })
   
-          console.log(logoRes);
-        }
+        //   console.log(logoRes);
+        // }
         responseHandler(res);
       } catch (error) {
         console.error(error);

@@ -190,7 +190,7 @@ function UsersIndex() {
             {/* Col-1 Fields go here */}
             <div className="flex flex-col gap-y-2">
               <label htmlFor="" className="text-sm font-medium">
-                User Code
+                User Code *
               </label>
               <input 
                 type="text" 
@@ -198,12 +198,13 @@ function UsersIndex() {
                 onChange={handleInputChange}
                 value={createUser.user_code}
                 className="bg-slate-100 hover:bg-white hover:border-blue-500 border border-slate-200 p-1 rounded-md text-slate-600"
-                tabIndex={1} 
+                tabIndex={1}
+                required 
               />
             </div>
             <div className="flex flex-col gap-y-2">
               <label htmlFor="" className="text-sm font-medium">
-                Password
+                Password {!isEditOn && '*'}
               </label>
               <input 
                 type="password" 
@@ -212,6 +213,7 @@ function UsersIndex() {
                 value={createUser.password}
                 className="bg-slate-100 hover:bg-white hover:border-blue-500 border border-slate-200 p-1 rounded-md text-slate-600" 
                 tabIndex={4}
+                required={!isEditOn}
               />
             </div>
           </div>
@@ -219,7 +221,7 @@ function UsersIndex() {
             {/* Col-2 Fields go here */}
             <div className="flex flex-col gap-y-2">
               <label htmlFor="" className="text-sm font-medium">
-                User Name
+                User Name *
               </label>
               <input 
                 type="text" 
@@ -228,11 +230,12 @@ function UsersIndex() {
                 value={createUser.user_name}
                 className="bg-slate-100 hover:bg-white hover:border-blue-500 border border-slate-200 p-1 rounded-md text-slate-600" 
                 tabIndex={2}
+                required
               />
             </div>
             <div className="flex flex-col gap-y-2">
               <label htmlFor="" className="text-sm font-medium">
-                Confirm Password
+                Confirm Password {!isEditOn && '*'}
               </label>
               <input 
                 type="password" 
@@ -241,6 +244,7 @@ function UsersIndex() {
                 value={createUser.confirm_password}
                 className="bg-slate-100 hover:bg-white hover:border-blue-500 border border-slate-200 p-1 rounded-md text-slate-600" 
                 tabIndex={5}
+                required={!isEditOn}
               />
             </div>
           </div>
@@ -248,7 +252,7 @@ function UsersIndex() {
             {/* Col-3 Fields go here */}
             <div className="flex flex-col gap-y-2">
               <label htmlFor="" className="text-sm font-medium">
-                Role
+                Role *
               </label>
               <Select 
                 options={roles} 

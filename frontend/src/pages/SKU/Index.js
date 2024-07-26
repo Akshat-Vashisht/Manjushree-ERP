@@ -145,7 +145,7 @@ function SKUIndex() {
             {/* Col-1 Fields go here */}
             <div className="flex flex-col gap-y-2">
               <label htmlFor="" className="text-sm font-medium">
-                SKU Code
+                SKU Code *
               </label>
               <input 
                 type="text" 
@@ -153,7 +153,8 @@ function SKUIndex() {
                 onChange={handleInputChange}
                 value={createSku.sku_code}
                 className="bg-slate-100 hover:bg-white hover:border-blue-500 border border-slate-200 p-1 rounded-md text-slate-600"
-                tabIndex={1} 
+                tabIndex={1}
+                required
               />
             </div>
           </div>
@@ -161,7 +162,7 @@ function SKUIndex() {
             {/* Col-2 Fields go here */}
             <div className="flex flex-col gap-y-2">
               <label htmlFor="" className="text-sm font-medium">
-                SKU Name
+                SKU Name *
               </label>
               <input 
                 type="text" 
@@ -170,6 +171,7 @@ function SKUIndex() {
                 value={createSku.sku_name}
                 className="bg-slate-100 hover:bg-white hover:border-blue-500 border border-slate-200 p-1 rounded-md text-slate-600" 
                 tabIndex={2}
+                required
               />
             </div>
           </div>

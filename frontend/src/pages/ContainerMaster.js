@@ -3,7 +3,7 @@ import { DatePicker, Modal, Select, Table } from "antd";
 import { SiTicktick } from "react-icons/si";
 import { RiDeleteBinLine } from "react-icons/ri";
 import axios from "axios";
-import { format, setDate } from "date-fns";
+import { format } from "date-fns";
 import toast from "react-hot-toast";
 import Layout from "../components/Layout";
 import { axiosConfig } from "../axios/axiosConfig";
@@ -11,8 +11,9 @@ import { useDispatch, useSelector } from "react-redux";
 
 const ContainerMaster = () => {
   const user = useSelector((state) => state.user.user);
-  const [selectionType, setSelectionType] = useState("checkbox");
+  const [selectionType, setSelectionType] = useState("radio");
   const [containerData, setContainerData] = useState([]);
+  const [checkedRowKey, setCheckedRowKey] = useState(null);
   const [checkedRows, setCheckedRows] = useState([]);
   const [categoryData, setCategoryData] = useState([]);
   const [isEditOn, setIsEditOn] = useState(false);
@@ -189,8 +190,16 @@ const ContainerMaster = () => {
     }
   };
   const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      setCheckedRows(selectedRows);
+    selectedRowKeys: checkedRowKey ? [checkedRowKey] : [],
+    type: "radio",
+    onSelect: (record) => {
+      if (checkedRowKey === record.key) {
+        setCheckedRowKey(null);
+        setCheckedRows([]);
+      } else {
+        setCheckedRowKey(record.key);
+        setCheckedRows([record]);
+      }
     },
   };
 
@@ -258,7 +267,7 @@ const ContainerMaster = () => {
                 value={createContainer.container_category_master_id}
                 className="bg-slate-100"
                 onChange={handleChange}
-                options={categoryData}
+                options={categoryData} 
               />
             </div>
           </div>
@@ -302,7 +311,7 @@ const ContainerMaster = () => {
         )}
         <Table
           rowSelection={{
-            type: selectionType,
+            type: "radio",
             ...rowSelection,
           }}
           columns={columns}

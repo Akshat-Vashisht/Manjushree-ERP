@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, File, UploadFile,
 from sqlalchemy.orm import Session
 from .handler import _list_of_business_entities, _create_business_entity, _update_business_entity, _soft_delete_business_entity, _get_business_entity, _upload_logo
 from ...utils import get_db, UploadHelper
+from ...auth.handler import get_current_user
 from ...exceptions import unique_validations_fail_exception, not_found_exception
 from .schemas import BusinessEntitySchema, BusinessEntityCreateSchema, BusinessEntityUpdateSchema, CreateForm
 from typing import Annotated, Union, Optional
@@ -13,11 +14,20 @@ router = APIRouter(
 )
 
 @router.get('/')
-def list_of_business_entities(db: Session = Depends(get_db), page: int = 1, page_size: int = 10):
+def list_of_business_entities(
+    db: Session = Depends(get_db), 
+    page: int = 1, 
+    page_size: int = 10,
+    user = Depends(get_current_user)
+):
     return _list_of_business_entities(db, page, page_size)
 
 @router.get('/{id}', response_model=BusinessEntitySchema)
-def get_business_entity(id: int, db: Session = Depends(get_db)):
+def get_business_entity(
+    id: int, 
+    db: Session = Depends(get_db),
+    user = Depends(get_current_user)
+):
     entity = _get_business_entity(db, id)
 
     if isinstance(entity, int) and entity == 0:
@@ -30,9 +40,9 @@ def get_business_entity(id: int, db: Session = Depends(get_db)):
 def create_business_entity(
     be_input: BusinessEntityCreateSchema, 
     db: Session = Depends(get_db),
+    user = Depends(get_current_user)
 ):
-    # TODO: Remove hardcoded last_updated_by
-    result = _create_business_entity(db, be_input, 1)
+    result = _create_business_entity(db, be_input, user.user_master_id)
 
     # Result returend integer since a record with given business_entity_name already exists
     if isinstance(result, int) and result == 1:
@@ -42,9 +52,13 @@ def create_business_entity(
     return result
 
 @router.patch('/{id}', response_model=BusinessEntitySchema)
-def update_business_entity(id: int, be_input: BusinessEntityUpdateSchema, db: Session = Depends(get_db)):
-    # TODO: Remove hardcoded last_updated_by
-    result = _update_business_entity(db, id, be_input, 1)
+def update_business_entity(
+    id: int, 
+    be_input: BusinessEntityUpdateSchema, 
+    db: Session = Depends(get_db),
+    user = Depends(get_current_user)
+):
+    result = _update_business_entity(db, id, be_input, user.user_master_id)
     
     # If not found
     if isinstance(result, int) and result == 0:
@@ -59,8 +73,12 @@ def update_business_entity(id: int, be_input: BusinessEntityUpdateSchema, db: Se
     return result
 
 @router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT)
-def delete_business_entity(id: int, db: Session = Depends(get_db)):
-    result = _soft_delete_business_entity(db, id, 1)
+def delete_business_entity(
+    id: int, 
+    db: Session = Depends(get_db),
+    user = Depends(get_current_user)
+):
+    result = _soft_delete_business_entity(db, id, user.user_master_id)
 
     if result == 0:
         detail = {"error": True, "message": "Business Entity not found."}

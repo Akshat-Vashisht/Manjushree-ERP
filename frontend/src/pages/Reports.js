@@ -26,103 +26,96 @@ const Reports = () => {
     }
   }
 
-  async function getAllContainersAtManjushree() {
-    try {
-      const res = await axiosConfig.get("/reports/containers-at-manjushree");
-      setAllData((prevData) => {
-        const newData = [...prevData];
-        newData[1] = res.data;
-        return newData;
-      });
-    } catch (error) {
-      console.error("ERR::GET::MANJUSHREE");
-    }
-  }
+  // async function getAllContainersAtManjushree() {
+  //   try {
+  //     const res = await axiosConfig.get("/reports/containers-at-manjushree");
+  //     setAllData((prevData) => {
+  //       const newData = [...prevData];
+  //       newData[1] = res.data;
+  //       return newData;
+  //     });
+  //   } catch (error) {
+  //     console.error("ERR::GET::MANJUSHREE");
+  //   }
+  // }
 
-  async function getAllClientOptions() {
-    try {
-      const res = await axiosConfig.get("/reports/get-clients");
-      setAllOptions((prevOptions) => {
-        const newOptions = [...prevOptions];
-        newOptions[0] = res.data.map((item, index) => ({
-          label: item,
-          key: index,
-        }));
-        return newOptions;
-      });
-    } catch (error) {
-      console.error("ERR::GET::ALL");
-    }
-  }
+  // async function getAllClientOptions() {
+  //   try {
+  //     const res = await axiosConfig.get("/reports/get-clients");
+  //     setAllOptions((prevOptions) => {
+  //       const newOptions = [...prevOptions];
+  //       newOptions[0] = res.data.map((item, index) => ({
+  //         label: item,
+  //         key: index,
+  //       }));
+  //       return newOptions;
+  //     });
+  //   } catch (error) {
+  //     console.error("ERR::GET::ALL");
+  //   }
+  // }
 
-  async function getAllVendorsOptions() {
-    try {
-      const res = await axiosConfig.get("/reports/get-vendors");
-      setAllOptions((prevOptions) => {
-        const newOptions = [...prevOptions];
-        newOptions[1] = res.data.map((item, index) => ({
-          label: item,
-          key: index,
-        }));
-        return newOptions;
-      });
-    } catch (error) {
-      console.error("ERR::GET::ALL");
-    }
-  }
+  // async function getAllVendorsOptions() {
+  //   try {
+  //     const res = await axiosConfig.get("/reports/get-vendors");
+  //     setAllOptions((prevOptions) => {
+  //       const newOptions = [...prevOptions];
+  //       newOptions[1] = res.data.map((item, index) => ({
+  //         label: item,
+  //         key: index,
+  //       }));
+  //       return newOptions;
+  //     });
+  //   } catch (error) {
+  //     console.error("ERR::GET::ALL");
+  //   }
+  // }
 
-  async function getAllClients() {
-    try {
-      const res = await axiosConfig.get(
-        `/reports/get-client-report/${selectedOption[0]}`
-      );
-      setAllData((prevData) => {
-        const newData = [...prevData];
-        newData[2] = res.data;
-        return newData;
-      });
-    } catch (error) {
-      console.error("ERR::GET::ALL");
-    }
-  }
+  // async function getAllClients() {
+  //   try {
+  //     const res = await axiosConfig.get(
+  //       `/reports/get-client-report/${selectedOption[0]}`
+  //     );
+  //     setAllData((prevData) => {
+  //       const newData = [...prevData];
+  //       newData[2] = res.data;
+  //       return newData;
+  //     });
+  //   } catch (error) {
+  //     console.error("ERR::GET::ALL");
+  //   }
+  // }
 
-  async function getAllVendors() {
-    try {
-      const res = await axiosConfig.get(
-        `/reports/get-vendor-report/${selectedOption[1]}`
-      );
-      setAllData((prevData) => {
-        const newData = [...prevData];
-        newData[3] = res.data;
-        return newData;
-      });
-    } catch (error) {
-      console.error("ERR::GET::ALL");
-    }
-  }
+  // async function getAllVendors() {
+  //   try {
+  //     const res = await axiosConfig.get(
+  //       `/reports/get-vendor-report/${selectedOption[1]}`
+  //     );
+  //     setAllData((prevData) => {
+  //       const newData = [...prevData];
+  //       newData[3] = res.data;
+  //       return newData;
+  //     });
+  //   } catch (error) {
+  //     console.error("ERR::GET::ALL");
+  //   }
+  // }
 
-  function handleTabChange(index) {
-    setActive(index);
-    setDataSource(allData[index]);
-    if (index === 2) {
-      setOptions(allOptions[0]);
-    }
-    if (index === 3) {
-      setOptions(allOptions[1]);
-    }
-  }
+  // function handleTabChange(index) {
+  //   setActive(index);
+  //   setDataSource(allData[index]);
+  //   if (index === 2) {
+  //     setOptions(allOptions[0]);
+  //   }
+  //   if (index === 3) {
+  //     setOptions(allOptions[1]);
+  //   }
+  // }
 
   useEffect(() => {
     getAllContainers();
-    getAllContainersAtManjushree();
-    getAllClientOptions();
-    getAllVendorsOptions();
   }, []);
 
-  useEffect(() => {
-    if (selectedOption[0]) getAllClients();
-    if (selectedOption[1]) getAllVendors();
-  }, [selectedOption]);
   useEffect(() => {
     setColumns(
       Object.keys(dataSource[0] || {}).map((item) => ({
@@ -132,6 +125,7 @@ const Reports = () => {
       }))
     );
   }, [dataSource]);
+
   useEffect(() => {
     setDataSource(allData[active] || 0);
   }, [allData]);
@@ -158,19 +152,7 @@ const Reports = () => {
         {tabs[active] ? tabs[active] + " Containers Detail" : ""}
       </h1>
       <hr className="mb-2 text-slate-700" />
-      <div className="flex gap-x-5 text-sm my-4">
-        {tabs.map((item, index) => (
-          <span
-            key={index}
-            onClick={() => handleTabChange(index)}
-            className={`px-3 py-1 rounded-md cursor-pointer ${
-              active === index ? "bg-slate-300" : "bg-slate-100"
-            }`}
-          >
-            {item}
-          </span>
-        ))}
-      </div>
+      <div className="flex gap-x-5 text-sm my-4"></div>
       {active === 2 || active === 3 ? (
         <Dropdown
           className="border border-slate-400 rounded-md w-[10rem] px-3 py-1 my-2"

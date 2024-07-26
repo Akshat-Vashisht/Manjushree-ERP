@@ -151,3 +151,9 @@ def get_vendor_report(db: Session, vendor_name: str):
             container_code=container.container_code,
             rfid_tag_no=container.rfid_tag_no
         ) for container in containers]
+
+
+def fetch_business_entity_names(db: Session):
+    business_entity_names = db.query(
+        BusinessEntityMaster.business_entity_name).distinct().all()
+    return [business.business_entity_name for business in business_entity_names]

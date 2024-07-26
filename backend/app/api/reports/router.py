@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from ...auth.handler import get_current_user
 from ...utils import get_db
 from .schemas import AllContainerDetailsSchema, ContainerDetailsManjushreeSchema
-from .handler import get_all_containers_details, get_containers_at_manjushree_details, get_all_clients, get_client_report, get_all_vendors, get_vendor_report
+from .handler import get_all_containers_details, get_containers_at_manjushree_details, get_all_clients, get_client_report, get_all_vendors, get_vendor_report, fetch_business_entity_names
 
 router = APIRouter(
     prefix='/reports',
@@ -59,5 +59,14 @@ async def get_vendor(vendor_name: str, db: Session = Depends(get_db)):
     try:
         vendor_report = jsonable_encoder(get_vendor_report(db, vendor_name))
         return JSONResponse(status_code=status.HTTP_200_OK, content=vendor_report)
+    except Exception as e:
+        return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content={'detail': str(e)})
+
+
+@router.get('/business-entity-names')
+async def get_business_entity_names(db: Session = Depends(get_db)):
+    try:
+        businesses = jsonable_encoder(fetch_business_entity_names(db))
+        return JSONResponse(status_code=status.HTTP_200_OK, content=businesses)
     except Exception as e:
         return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content={'detail': str(e)})

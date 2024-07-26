@@ -38,15 +38,59 @@ const Sidebar = () => {
         </Link>
 
         <Link
-          to={`/${userRole}/reports`}
+          to={`/${userRole}/reports/1`}
           className={`flex items-center justify-start pl-9 gap-x-2 py-3 text-center rounded-lg hover:bg-slate-700 ${
-            location.pathname.includes(`/${userRole}/reports`)
+            location.pathname.includes(`/${userRole}/reports/1`)
               ? "bg-slate-700 text-white"
               : "bg-none text-slate-200"
           }`}
         >
           <TbReport className="text-xl" />
-          Reports
+          Report 1
+        </Link>
+        <Link
+          to={`/${userRole}/reports/2`}
+          className={`flex items-center justify-start pl-9 gap-x-2 py-3 text-center rounded-lg hover:bg-slate-700 ${
+            location.pathname.includes(`/${userRole}/reports/2`)
+              ? "bg-slate-700 text-white"
+              : "bg-none text-slate-200"
+          }`}
+        >
+          <TbReport className="text-xl" />
+          Report 2
+        </Link>
+        <Link
+          to={`/${userRole}/reports/3`}
+          className={`flex items-center justify-start pl-9 gap-x-2 py-3 text-center rounded-lg hover:bg-slate-700 ${
+            location.pathname.includes(`/${userRole}/reports/3`)
+              ? "bg-slate-700 text-white"
+              : "bg-none text-slate-200"
+          }`}
+        >
+          <TbReport className="text-xl" />
+          Report 3
+        </Link>
+        <Link
+          to={`/${userRole}/reports/4`}
+          className={`flex items-center justify-start pl-9 gap-x-2 py-3 text-center rounded-lg hover:bg-slate-700 ${
+            location.pathname.includes(`/${userRole}/reports/4`)
+              ? "bg-slate-700 text-white"
+              : "bg-none text-slate-200"
+          }`}
+        >
+          <TbReport className="text-xl" />
+          Report 4
+        </Link>
+        <Link
+          to={`/${userRole}/container/search`}
+          className={`flex items-center justify-start pl-9 gap-x-2 py-3 text-center rounded-lg hover:bg-slate-700 ${
+            location.pathname.includes(`/${userRole}/container/search`)
+              ? "bg-slate-700 text-white"
+              : "bg-none text-slate-200"
+          }`}
+        >
+          <TbReport className="text-xl" />
+          Search
         </Link>
 
         {/* <Link className="flex items-center justify-start pl-9 gap-x-2 py-3 text-center rounded-lg hover:bg-slate-700 text-slate-200">

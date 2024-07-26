@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Select, Table, Button } from "antd";
 import Layout from "../components/Layout";
 import { axiosConfig } from "../axios/axiosConfig";
+import { format } from "date-fns";
 
 const SearchContainer = () => {
   const [dataSource, setDataSource] = useState([]);
@@ -31,8 +32,12 @@ const SearchContainer = () => {
   const getContainerData = async () => {
     try {
       const res = await axiosConfig.get("/container-movement/");
-      setDataSource(res.data.detail);
-      setFilteredData(res.data.detail);
+      setDataSource(
+        res.data.detail.map((item, index) => ({ ...item, index: index + 1 }))
+      );
+      setFilteredData(
+        res.data.detail.map((item, index) => ({ ...item, index: index + 1 }))
+      );
     } catch (error) {
       console.error(error);
     }
@@ -40,10 +45,8 @@ const SearchContainer = () => {
 
   const getBusinessEntities = async () => {
     try {
-      const res = await axiosConfig.get("/"); // <----- yaha pe endpoint daal dijiye
-      setBusinessEntities([
-        ...new Set(res.data.map((item) => item.business_entity_name)),
-      ]);
+      const res = await axiosConfig.get("/reports/business-entity-names");
+      setBusinessEntities([...res.data]);
     } catch (error) {
       console.error(error);
     }
@@ -96,14 +99,41 @@ const SearchContainer = () => {
 
   const columns = [
     {
-      title: "Business Entity",
-      dataIndex: "business_entity_name",
-      key: "business_entity_name",
+      title: "Sr. No.",
+      dataIndex: "index",
+      key: "index",
     },
     {
       title: "Container Code",
       dataIndex: "container_code",
       key: "container_code",
+    },
+    {
+      title: "RFID Tag ID",
+      dataIndex: "rfid_tag_no",
+      key: "rfid_tag_no",
+    },
+    {
+      title: "Business Entity",
+      dataIndex: "business_entity_name",
+      key: "business_entity_name",
+    },
+    {
+      title: "Location",
+      dataIndex: "location_name",
+      key: "location_name",
+    },
+    {
+      title: "Date",
+      dataIndex: "scanning_dt",
+      key: "scanning_dt",
+      render: (text) => format(new Date(text), "yyyy-MM-dd"),
+    },
+    {
+      title: "Time",
+      dataIndex: "scanning_dt",
+      key: "scanning_dt",
+      render: (text) => new Date(text).toLocaleTimeString(),
     },
     {
       title: "SKU Code",
@@ -119,21 +149,6 @@ const SearchContainer = () => {
       title: "Pick List Code",
       dataIndex: "pick_list_code",
       key: "pick_list_code",
-    },
-    {
-      title: "RFID Tag ID",
-      dataIndex: "rfid_tag_no",
-      key: "rfid_tag_no",
-    },
-    {
-      title: "Location",
-      dataIndex: "location_name",
-      key: "location_name",
-    },
-    {
-      title: "Scanning Date",
-      dataIndex: "scanning_dt",
-      key: "scanning_dt",
     },
   ];
 
@@ -269,6 +284,7 @@ const SearchContainer = () => {
         dataSource={filteredData}
         rowKey="container_movement_id"
         className="mt-5"
+        pagination={{ pageSize: 5 }}
       />
     </Layout>
   );

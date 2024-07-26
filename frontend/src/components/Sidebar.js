@@ -92,6 +92,17 @@ const Sidebar = () => {
           <TbReport className="text-xl" />
           Search
         </Link>
+        <Link
+          to={`/${userRole}/container/movement`}
+          className={`flex items-center justify-start pl-9 gap-x-2 py-3 text-center rounded-lg hover:bg-slate-700 ${
+            location.pathname.includes(`/${userRole}/container/movement`)
+              ? "bg-slate-700 text-white"
+              : "bg-none text-slate-200"
+          }`}
+        >
+          <TbReport className="text-xl" />
+          History
+        </Link>
 
         {/* <Link className="flex items-center justify-start pl-9 gap-x-2 py-3 text-center rounded-lg hover:bg-slate-700 text-slate-200">
           <FiUser className="text-xl" />

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { axiosConfig } from "../../axios/axiosConfig";
-import { useFormik } from 'formik';
+import { useFormik, Field } from 'formik';
 import * as Yup from 'yup';
 import FormFieldError from "../FormFieldError";
 
@@ -21,31 +21,58 @@ const defaultFormState = {
   entity_type: "",
 };
 
+const sanitizeData = (data, direction = 1) => {
+  let _data = { ...data };
+
+  switch (direction) {
+    case 1:
+      // Santize data recieved
+      _data.entity_type = null;
+
+      if (data.is_client) _data.entity_type = "client";
+
+      if (data.is_vendor) _data.entity_type = "vendor";
+
+      if (data.is_transporter) _data.entity_type = "transporter";
+
+      // Remove unwanted data
+      [
+        "business_entity_master_id",
+        "is_client",
+        "is_vendor",
+        "is_transporter",
+        "is_active",
+        "last_updated_dt",
+        "last_updated_by",
+      ].map((key) => delete _data[key]);
+      break;
+    case 2:
+      // Sanitize data to be sent
+      _data.is_client = data.entity_type === "client";
+      _data.is_vendor = data.entity_type === "vendor";
+      _data.is_transporter = data.entity_type === "transporter";
+
+      delete _data.entity_type;
+      break;
+  }
+
+  return _data;
+};
+
+const getInitialValues = (values = null) => {
+  if(values)
+    return sanitizeData(values)
+  return defaultFormState
+}
+
 function BusinessEntityForm({
   formInputs = null,
   id = null,
   responseHandler = (res) => {},
 }) {
-  const [formData, setFormData] = useState(defaultFormState);
   const [logoFile, setLogoFile] = useState(null);
   const formik = useFormik({
-    initialValues: formInputs ? {
-      ...formInputs,
-      entity_type: 'vendor'
-    } : {
-        business_entity_code: "",
-        business_entity_name: "",
-        address: "",
-        city: "",
-        district: "",
-        state: "",
-        country: "",
-        pin: "",
-        telephone_no1: "",
-        mobile_no1: "",
-        email_id: "",
-        entity_type: "",
-    },
+    initialValues: getInitialValues(formInputs),
     validationSchema: Yup.object({
       business_entity_code: Yup.string()
           .min(5, 'Min 5 characters')
@@ -110,98 +137,9 @@ function BusinessEntityForm({
     }
   });
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
   const handleFileChange = (e) => {
     setLogoFile(e.target.files[0]);
   };
-
-  const sanitizeData = (data, direction = 1) => {
-    let _data = { ...data };
-
-    switch (direction) {
-      case 1:
-        // Santize data recieved
-        _data.entity_type = null;
-
-        if (data.is_client) _data.entity_type = "client";
-
-        if (data.is_vendor) _data.entity_type = "vendor";
-
-        if (data.is_transporter) _data.entity_type = "transporter";
-
-        // Remove unwanted data
-        [
-          "business_entity_master_id",
-          "is_client",
-          "is_vendor",
-          "is_transporter",
-          "is_active",
-          "last_updated_dt",
-          "last_updated_by",
-        ].map((key) => delete _data[key]);
-        break;
-      case 2:
-        // Sanitize data to be sent
-        _data.is_client = data.entity_type === "client";
-        _data.is_vendor = data.entity_type === "vendor";
-        _data.is_transporter = data.entity_type === "transporter";
-
-        delete _data.entity_type;
-        break;
-    }
-
-    return _data;
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      let res;
-      
-      const cleanData = sanitizeData(formData, 2);
-
-      let entity_id = id;
-
-      if (id) {
-        res = await axiosConfig.patch(`/business-entities/${id}`, cleanData);
-      } else {
-        res = await axiosConfig.post(`/business-entities/`, cleanData);
-        id = res.data.business_entity_id;
-      }
-
-      // Check for logo and upload file
-      if(logoFile) {
-        const _formData = new FormData(); 
-        _formData.append('logo', logoFile);
-
-        const logoRes = await axiosConfig.post(`/business-entities/${id}/logo`, _formData, {
-          headers: {
-            "Accept": "application/json",
-            "Content-Type": "multipart/form-data",
-          }
-        })
-
-        console.log(logoRes);
-      }
-      responseHandler(res);
-    } catch (error) {
-      console.error(error);
-      responseHandler(error.response);
-    }
-  };
-
-  useEffect(() => {
-    console.log(formik.initialValues);
-  }, []);
 
   const baseInputClass =
     "bg-slate-100 hover:bg-white hover:border-blue-500 border border-slate-200 p-2 rounded-md text-slate-600";
@@ -406,7 +344,7 @@ function BusinessEntityForm({
         </div> */}
         {/* Col 3 wide */}
         <div className="col-span-2 mt-6">
-          <label htmlFor="">Business Entity Type *</label>
+          <label htmlFor="">Business Entity Type</label>
           <div className="flex gap-x-10 mt-3">
             <div>
               <input
@@ -416,7 +354,7 @@ function BusinessEntityForm({
                 value={"client"}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                //checked={formData.entity_type === "client"}
+                checked={formik.values.entity_type === 'client'}
               />
               <label htmlFor="entity_type_client" className="ml-4">
                 Client
@@ -430,7 +368,7 @@ function BusinessEntityForm({
                 value={"vendor"}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                //checked={formData.entity_type === "vendor"}
+                checked={formik.values.entity_type === 'vendor'}
               />
               <label htmlFor="entity_type_vendor" className="ml-4">
                 Vendor
@@ -444,7 +382,7 @@ function BusinessEntityForm({
                 value={"transporter"}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                //checked={formData.entity_type === "transporter"}
+                checked={formik.values.entity_type === 'transporter'}
               />
               <label htmlFor="entity_type_transporter" className="ml-4">
                 Transporter

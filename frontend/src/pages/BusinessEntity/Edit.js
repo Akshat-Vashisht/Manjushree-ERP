@@ -9,6 +9,7 @@ function EditBusinessEntity() {
   const { entityId } = useParams();
   const navigate = useNavigate();
   const [businessEntityData, setBusinessEntityData] = useState(null);
+  const [defaultRedirect, setDefaultRedirect] = useState(`/1/business-entity-master`);
 
   const getEntity = async () => {
     try {
@@ -18,7 +19,7 @@ function EditBusinessEntity() {
       const { response } = error;
 
       if (response.status === 404) {
-        navigate("/business-entity-master");
+        navigate(defaultRedirect);
       } else {
         toast.error("Something went wrong, please try again later");
       }
@@ -26,8 +27,10 @@ function EditBusinessEntity() {
   };
 
   const handleFormResponse = (res) => {
-    if (res.status == 200)
+    if (res.status == 200) {
       toast.success("Business Entity updated successfully");
+      navigate(defaultRedirect)
+    }
     else toast.success("Something went wrong");
   };
 

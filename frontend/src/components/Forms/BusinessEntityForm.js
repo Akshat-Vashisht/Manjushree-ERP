@@ -134,9 +134,9 @@ function BusinessEntityForm({
     }
   });
 
-  const handleFileChange = (e) => {
-    setLogoFile(e.target.files[0]);
-  };
+  // const handleFileChange = (e) => {
+  //   setLogoFile(e.target.files[0]);
+  // };
 
   const baseInputClass =
     "bg-slate-100 hover:bg-white hover:border-blue-500 border border-slate-200 p-2 rounded-md text-slate-600";

@@ -38,12 +38,20 @@ const ContainerMovement = () => {
           title: "Date",
           dataIndex: "scanning_dt",
           key: "scanning_dt",
-          render: (text) => (
-            <p>
-              {format(text, "yyyy-MM-dd")}
-              <br />
-              {new Date(text).toLocaleTimeString()}
-            </p>
+          render: (text, record) => (
+            <>
+              {record.key === 0 ? (
+                <p className="font-semibold">Current Location</p>
+              ) : (
+                <p>
+                  {new Date()
+                    .toLocaleDateString("en-US")
+                    .replace("/", "-")
+                    .replace("/", "-")}{" "}
+                  <br /> {new Date(text).toLocaleTimeString()}
+                </p>
+              )}
+            </>
           ),
         },
         {
@@ -60,7 +68,6 @@ const ContainerMovement = () => {
           title: "Business Entity Name",
           dataIndex: "business_entity_name",
           key: "business_entity_name",
-          render: (text) => text || "N/A",
         },
         {
           title: "Location",
@@ -81,8 +88,11 @@ const ContainerMovement = () => {
         },
       ]);
     } catch (error) {
-      console.error("ERR", error);
-      toast.error("Error fetching data");
+      if (error.response.status === 404) {
+        toast.error(error.response.data.detail);
+        setDataSource([]);
+        setColumns([]);
+      } else toast.error("Something went wrong");
     }
   }
 
@@ -98,8 +108,7 @@ const ContainerMovement = () => {
   function handleSubmit() {
     if (value.rfid_tag_no.length > 0 || value.container_code.length > 0) {
       getContainerMovement();
-    }
-    toast.error("Please enter either RFID Tag No. or Container Code");
+    } else toast.error("Please enter either RFID Tag No. or Container Code");
     return;
   }
 

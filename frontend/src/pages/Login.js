@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { RiAppleLine, RiGoogleLine } from "react-icons/ri";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { setLoggedin, addUser } from "../store/features/common/userSlice";
 import { axiosConfig } from "../axios/axiosConfig";

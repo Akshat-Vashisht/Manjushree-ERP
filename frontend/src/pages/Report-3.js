@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../components/Layout";
-import { Menu, Table, Dropdown } from "antd";
+import { Table, Dropdown } from "antd";
 import { axiosConfig } from "../axios/axiosConfig";
 
 const Report3 = () => {

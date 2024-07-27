@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import { VictoryPie, VictoryBar, VictoryChart, VictoryAxis } from "victory";
-import { RxChevronRight } from "react-icons/rx";
 import { axiosConfig } from "../axios/axiosConfig";
 
 const AdminDashboard = () => {

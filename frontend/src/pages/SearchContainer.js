@@ -3,7 +3,7 @@ import { Select, Table, Button } from "antd";
 import Layout from "../components/Layout";
 import { axiosConfig } from "../axios/axiosConfig";
 import { format } from "date-fns";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 const SearchContainer = () => {
   const [dataSource, setDataSource] = useState([]);

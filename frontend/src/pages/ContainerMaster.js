@@ -2,12 +2,11 @@ import React, { useEffect, useState } from "react";
 import { DatePicker, Modal, Select, Table } from "antd";
 import { SiTicktick } from "react-icons/si";
 import { RiDeleteBinLine } from "react-icons/ri";
-import axios from "axios";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
 import Layout from "../components/Layout";
 import { axiosConfig } from "../axios/axiosConfig";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 const ContainerMaster = () => {
   const user = useSelector((state) => state.user.user);

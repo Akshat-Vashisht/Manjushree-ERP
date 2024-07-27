@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { RiAppleLine, RiGoogleLine } from "react-icons/ri";
+import React, { useState } from "react";
 import { LuEye, LuEyeOff } from "react-icons/lu";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -12,6 +11,7 @@ const Signup = () => {
     user_name: "",
     password: "",
     cnfPassword:"",
+    // Change to role based in future
     role: 1,
   });
 

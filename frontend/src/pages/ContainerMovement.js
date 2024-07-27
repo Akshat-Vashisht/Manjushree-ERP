@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { axiosConfig } from "../axios/axiosConfig";
 import Layout from "../components/Layout";
 import { Table } from "antd";
+import toast, { Toaster } from 'react-hot-toast';
+import { format } from "date-fns";
 
 const ContainerMovement = () => {
   const [value, setValue] = useState({
@@ -23,20 +25,52 @@ const ContainerMovement = () => {
         res = await axiosConfig.get(
           `/container-movement/history/?${isEnable}=${value.rfid_tag_no}`
         );
+
       setDataSource(res.data.detail);
-      setColumns(
-        Object.keys(res.data.detail[0] || {}).map((item) => ({
-          title: (
-            <span className="whitespace-nowrap">
-              {item.split("_").join(" ").toUpperCase()}
-            </span>
-          ),
-          dataIndex: item,
-          key: item,
-        }))
-      );
+      setColumns([
+        {
+          title: "Date",
+          dataIndex: "scanning_dt",
+          key: "scanning_dt",
+          render: (text) => <p>{format(text,"yyyy-MM-dd")}<br/>{new Date(text).toLocaleTimeString()}</p>,
+        },
+        {
+          title: "Container ID",
+          dataIndex: "container_code",
+          key: "container_code",
+        },
+        {
+          title: "RFID ID",
+          dataIndex: "rfid_tag_no",
+          key: "rfid_tag_no",
+        },
+        {
+          title: "Business Entity Name",
+          dataIndex: "business_entity_name",
+          key: "business_entity_name",
+          render: (text) => text || "N/A",
+        },
+        {
+          title: "Location",
+          dataIndex: "location_name",
+          key: "location_name",
+        },
+        {
+          title: "Empty/Filled",
+          dataIndex: "sku_master_id",
+          key: "sku_master_id",
+          render: (sku_master_id) => (sku_master_id ? "Filled" : "Empty"),
+        },
+        {
+          title: "SKU Name",
+          dataIndex: "sku_name",
+          key: "sku_name",
+          render: (text) => text || "N/A",
+        },
+      ]);
     } catch (error) {
       console.error("ERR", error);
+      toast.error("Error fetching data");
     }
   }
 
@@ -50,6 +84,10 @@ const ContainerMovement = () => {
   }
 
   function handleSubmit() {
+    if (!value.rfid_tag_no && !value.container_code) {
+      toast.error("Please enter either RFID Tag No. or Container Code");
+      return;
+    }
     getContainerMovement();
   }
 
@@ -57,6 +95,7 @@ const ContainerMovement = () => {
 
   return (
     <Layout>
+      <Toaster />
       <h1 className="font-semibold text-lg mb-5">Container Movement</h1>
       <hr className="mb-2 text-slate-700" />
       <div className="flex justify-between gap-x-20 items-end mb-10">
@@ -91,9 +130,7 @@ const ContainerMovement = () => {
           Search
         </button>
       </div>
-      <div className="overflow-x-scroll">
         <Table columns={columns} dataSource={dataSource} />
-      </div>
     </Layout>
   );
 };

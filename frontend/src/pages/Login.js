@@ -98,9 +98,9 @@ const Login = () => {
               className="focus:outline-none border border-slate-200 rounded-full py-2 px-3"
             />
           </div>
-          <span className="text-sm text-blue-500 cursor-pointer">
+          {/* <span className="text-sm text-blue-500 cursor-pointer">
             Forget Password?
-          </span>
+          </span> */}
         </div>
         <button
           className="bg-blue-500 text-white w-full py-2 rounded-full"

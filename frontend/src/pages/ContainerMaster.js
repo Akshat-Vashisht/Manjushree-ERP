@@ -153,7 +153,10 @@ const ContainerMaster = () => {
     }
     return true;
   };
-
+  const handleReset = () => {
+    setCheckedRowKey(null);
+    setCheckedRows([]);
+  };
   const handleClear = () => {
     setIsEditOn(false);
     setCreateContainer({
@@ -266,7 +269,7 @@ const ContainerMaster = () => {
                 value={createContainer.container_category_master_id}
                 className="bg-slate-100"
                 onChange={handleChange}
-                options={categoryData} 
+                options={categoryData}
               />
             </div>
           </div>
@@ -305,6 +308,13 @@ const ContainerMaster = () => {
               className="p-1 px-3 bg-gray-200 rounded-md disabled:bg-gray-100"
             >
               Delete
+            </button>
+            
+            <button
+              onClick={handleReset}
+              className="p-1 px-3 bg-gray-200 rounded-md disabled:bg-gray-100"
+            >
+              Reset
             </button>
           </div>
         )}

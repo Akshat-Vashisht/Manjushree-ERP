@@ -141,7 +141,7 @@ const SearchContainer = () => {
       title: "Date",
       dataIndex: "scanning_dt",
       key: "scanning_dt",
-      render: (text) => format(new Date(text), "yyyy-MM-dd"),
+      render: (text) => format(new Date(text), "dd-MM-yyyy"),
     },
     {
       title: "Time",

@@ -56,7 +56,14 @@ const SearchContainer = () => {
   const handleSearch = () => {
     const fromDate = filters.from_date ? new Date(filters.from_date) : null;
     const toDate = filters.to_date ? new Date(filters.to_date) : null;
+    const today = new Date();
 
+    today.setHours(0, 0, 0, 0);
+
+    if (fromDate && fromDate > today) {
+      toast.error("From Date cannot be greater than today");
+      return;
+    }
     if (fromDate && toDate && fromDate > toDate) {
       toast.error("From Date cannot be later than To Date");
       return;

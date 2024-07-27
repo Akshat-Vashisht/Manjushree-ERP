@@ -11,7 +11,6 @@ import { useDispatch, useSelector } from "react-redux";
 
 const ContainerMaster = () => {
   const user = useSelector((state) => state.user.user);
-  const [selectionType, setSelectionType] = useState("radio");
   const [containerData, setContainerData] = useState([]);
   const [checkedRowKey, setCheckedRowKey] = useState(null);
   const [checkedRows, setCheckedRows] = useState([]);

@@ -3,6 +3,7 @@ import { Select, Table, Button } from "antd";
 import Layout from "../components/Layout";
 import { axiosConfig } from "../axios/axiosConfig";
 import { format } from "date-fns";
+import toast, { Toaster } from "react-hot-toast";
 
 const SearchContainer = () => {
   const [dataSource, setDataSource] = useState([]);
@@ -53,9 +54,15 @@ const SearchContainer = () => {
   };
 
   const handleSearch = () => {
+    const fromDate = filters.from_date ? new Date(filters.from_date) : null;
+    const toDate = filters.to_date ? new Date(filters.to_date) : null;
+
+    if (fromDate && toDate && fromDate > toDate) {
+      toast.error("From Date cannot be later than To Date");
+      return;
+    }
+
     const filtered = dataSource.filter((item) => {
-      const fromDate = filters.from_date ? new Date(filters.from_date) : null;
-      const toDate = filters.to_date ? new Date(filters.to_date) : null;
       const scanningDate = new Date(item.scanning_dt);
 
       return (

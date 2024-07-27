@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import asc, desc, Date, Time
+from sqlalchemy import asc, desc
 from ...models import BusinessEntityMaster, ContainerMovement
 from .schemas import AllContainerDetailsSchema, ContainerDetailsManjushreeSchema, ClientWiseContainerDetailsSchema, VendorWiseContainerDetailsSchema
 
@@ -7,8 +7,7 @@ from .schemas import AllContainerDetailsSchema, ContainerDetailsManjushreeSchema
 def get_all_containers_details(db: Session):
     containers = db.query(
         ContainerMovement.business_entity_name,
-        ContainerMovement.scanning_dt.cast(Date).label('date'),
-        ContainerMovement.scanning_dt.cast(Time).label('time'),
+        ContainerMovement.scanning_dt,
         ContainerMovement.container_category,
         ContainerMovement.container_code,
         ContainerMovement.rfid_tag_no
@@ -21,8 +20,7 @@ def get_all_containers_details(db: Session):
     return [
         AllContainerDetailsSchema(
             business_entity_name=container.business_entity_name,
-            date=container.date,
-            time=container.time,
+            datetime=container.scanning_dt,
             container_category=container.container_category,
             container_code=container.container_code,
             rfid_tag_no=container.rfid_tag_no
@@ -32,9 +30,7 @@ def get_all_containers_details(db: Session):
 
 def get_containers_at_manjushree_details(db: Session):
     containers = db.query(
-        ContainerMovement.scanning_dt.cast(Date).label('date'),
-        ContainerMovement.scanning_dt.cast(
-            Time).label('time'),
+        ContainerMovement.scanning_dt,
         ContainerMovement.location_name,
         ContainerMovement.container_category,
         ContainerMovement.container_code,
@@ -47,8 +43,7 @@ def get_containers_at_manjushree_details(db: Session):
 
     return [
         ContainerDetailsManjushreeSchema(
-            date=container.date,
-            time=container.time,
+            datetime=container.scanning_dt,
             container_location=container.location_name,
             container_category=container.container_category,
             container_code=container.container_code,
@@ -77,8 +72,7 @@ def get_client_report(db: Session, client_name: str):
     if client_name.lower() == 'all':
         containers = db.query(
             ContainerMovement.business_entity_name,
-            ContainerMovement.scanning_dt.cast(Date).label('date'),
-            ContainerMovement.scanning_dt.cast(Time).label('time'),
+            ContainerMovement.scanning_dt,
             ContainerMovement.container_category,
             ContainerMovement.container_code,
             ContainerMovement.rfid_tag_no
@@ -90,8 +84,7 @@ def get_client_report(db: Session, client_name: str):
     else:
         containers = db.query(
             ContainerMovement.business_entity_name,
-            ContainerMovement.scanning_dt.cast(Date).label('date'),
-            ContainerMovement.scanning_dt.cast(Time).label('time'),
+            ContainerMovement.scanning_dt,
             ContainerMovement.container_category,
             ContainerMovement.container_code,
             ContainerMovement.rfid_tag_no
@@ -104,8 +97,7 @@ def get_client_report(db: Session, client_name: str):
     return [
         ClientWiseContainerDetailsSchema(
             business_entity_name=container.business_entity_name,
-            date=container.date,
-            time=container.time,
+            datetime=container.scanning_dt,
             container_category=container.container_category,
             container_code=container.container_code,
             rfid_tag_no=container.rfid_tag_no
@@ -118,8 +110,7 @@ def get_vendor_report(db: Session, vendor_name: str):
     if vendor_name.lower() == 'all':
         containers = db.query(
             ContainerMovement.business_entity_name,
-            ContainerMovement.scanning_dt.cast(Date).label('date'),
-            ContainerMovement.scanning_dt.cast(Time).label('time'),
+            ContainerMovement.scanning_dt,
             ContainerMovement.container_category,
             ContainerMovement.container_code,
             ContainerMovement.rfid_tag_no
@@ -131,8 +122,7 @@ def get_vendor_report(db: Session, vendor_name: str):
     else:
         containers = db.query(
             ContainerMovement.business_entity_name,
-            ContainerMovement.scanning_dt.cast(Date).label('date'),
-            ContainerMovement.scanning_dt.cast(Time).label('time'),
+            ContainerMovement.scanning_dt,
             ContainerMovement.container_category,
             ContainerMovement.container_code,
             ContainerMovement.rfid_tag_no
@@ -145,8 +135,7 @@ def get_vendor_report(db: Session, vendor_name: str):
     return [
         VendorWiseContainerDetailsSchema(
             business_entity_name=container.business_entity_name,
-            date=container.date,
-            time=container.time,
+            datetime=container.scanning_dt,
             container_category=container.container_category,
             container_code=container.container_code,
             rfid_tag_no=container.rfid_tag_no

@@ -1,19 +1,17 @@
 from pydantic import BaseModel
-from datetime import date, time
+from datetime import datetime
 
 
 class AllContainerDetailsSchema(BaseModel):
     business_entity_name: str
-    date: date
-    time: time
+    datetime: datetime
     container_category: str
     container_code: str
     rfid_tag_no: str
 
 
 class ContainerDetailsManjushreeSchema(BaseModel):
-    date: date
-    time: time
+    datetime: datetime
     container_location: str
     container_category: str
     container_code: str
@@ -24,8 +22,7 @@ class ContainerDetailsManjushreeSchema(BaseModel):
 
 class ClientWiseContainerDetailsSchema(BaseModel):
     business_entity_name: str
-    date: date
-    time: time
+    datetime: datetime
     container_category: str
     container_code: str
     rfid_tag_no: str
@@ -33,8 +30,7 @@ class ClientWiseContainerDetailsSchema(BaseModel):
 
 class VendorWiseContainerDetailsSchema(BaseModel):
     business_entity_name: str
-    date: date
-    time: time
+    datetime: datetime
     container_category: str
     container_code: str
     rfid_tag_no: str

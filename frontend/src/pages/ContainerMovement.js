@@ -13,6 +13,7 @@ const ContainerMovement = () => {
   const [dataSource, setDataSource] = useState([]);
   const [columns, setColumns] = useState([]);
   const [isEnable, setIsEnable] = useState("");
+  const [highlightedRowKey, setHighlightedRowKey] = useState(null); // State for highlighted row key
 
   async function getContainerMovement() {
     var res;
@@ -25,8 +26,10 @@ const ContainerMovement = () => {
         res = await axiosConfig.get(
           `/container-movement/history/?${isEnable}=${value.rfid_tag_no}`
         );
+      const data = res.data.detail.map((item,index)=>({...item, key:index}))
+      setDataSource(data);
+      setHighlightedRowKey(data[0]?.key); // Set the key of the first row to be highlighted
 
-      setDataSource(res.data.detail);
       setColumns([
         {
           title: "Date",
@@ -130,7 +133,11 @@ const ContainerMovement = () => {
           Search
         </button>
       </div>
-        <Table columns={columns} dataSource={dataSource} />
+      <Table 
+        columns={columns} 
+        dataSource={dataSource} 
+        rowClassName={(record) => record.key === highlightedRowKey ? 'bg-light-blue' : ''} // Apply custom class
+      />
     </Layout>
   );
 };

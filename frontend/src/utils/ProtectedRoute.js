@@ -10,7 +10,6 @@ const ProtectedRoute = ({ children }) => {
 
   if (isSessionLoaded) {
     if (!isLoggedin) {
-      console.log("LOGGEDIN?",isLoggedin)
       return <Navigate to="/" replace />;
     }
     return children;

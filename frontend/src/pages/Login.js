@@ -27,12 +27,11 @@ const Login = () => {
   }
   async function login() {
     if (checkFields()) {
-      console.log(data);
       try {
         setLoading(true);
         const promise = axiosConfig.post("/auth/login", data);
         const res = await promise;
-        console.log(res);
+
         toast.promise(promise, {
           loading: "Logging in",
           success: "Logged in Successfully",
@@ -41,12 +40,11 @@ const Login = () => {
         if (res.status == 200) {
           dispatch(setLoggedin(true));
           const userRes = await axiosConfig.get("/auth/users/me");
-          console.log(userRes);
+
           dispatch(addUser(userRes.data));
           const userRole = userRes.data.role;
           navigate(`/${userRole}/dashboard`);
         }
-        console.log("user login api response", res);
       } catch (error) {
         toast.error(error.response.data.detail);
       } finally {

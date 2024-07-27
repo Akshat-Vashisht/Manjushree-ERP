@@ -51,7 +51,6 @@ const Signup = () => {
       try {
         setLoading(true);
         const res = await axiosConfig.post("/auth/register", data);
-        console.log(res)
         toast.success("User created successfully");
         if (res.status === 200) {
           navigate("/", {
@@ -64,7 +63,7 @@ const Signup = () => {
         } else {
           toast.error("Something went wrong");
         }
-        console.log(error);
+
       } finally {
         setLoading(false);
       }

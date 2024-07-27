@@ -19,7 +19,6 @@ const AdminDashboard = () => {
         axiosConfig.get("/dashboard/dashboard-3"),
         axiosConfig.get("/dashboard/dashboard-4"),
       ]);
-      console.log(res1, res2, res3, res4);
       setDashboard1(res1.data);
       setDashboard2(res2.data);
       setDashboard3(res3.data);

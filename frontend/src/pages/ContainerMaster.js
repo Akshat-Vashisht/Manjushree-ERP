@@ -126,7 +126,6 @@ const ContainerMaster = () => {
           res = await axiosConfig.post("/containers/", createContainer);
         else res = await axiosConfig.patch("/containers/", createContainer);
 
-        console.log(res);
         if (res.status === 201) {
           toast.success(`${res.data.detail.container_code} created!`);
         } else if (res.status === 204 && isEditOn) {

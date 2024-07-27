@@ -3,7 +3,7 @@ import ContainerMaster from "./pages/ContainerMaster";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import Reports from "./pages/Reports";
+import Report1 from "./pages/Report-1";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import AdminDashboard from "./pages/AdminDashboard";
 import useUserUtility from "./utils/useUserUtility";
@@ -41,7 +41,7 @@ function App() {
           path="/1/reports/1"
           element={
             <ProtectedRoute>
-              <Reports/>
+              <Report1/>
             </ProtectedRoute>
           }
         />

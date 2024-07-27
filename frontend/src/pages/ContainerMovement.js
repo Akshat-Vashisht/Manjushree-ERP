@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { axiosConfig } from "../axios/axiosConfig";
 import Layout from "../components/Layout";
 import { Table } from "antd";
-import toast, { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from "react-hot-toast";
 import { format } from "date-fns";
 
 const ContainerMovement = () => {
@@ -13,7 +13,7 @@ const ContainerMovement = () => {
   const [dataSource, setDataSource] = useState([]);
   const [columns, setColumns] = useState([]);
   const [isEnable, setIsEnable] = useState("");
-  const [highlightedRowKey, setHighlightedRowKey] = useState(null); // State for highlighted row key
+  const [highlightedRowKey, setHighlightedRowKey] = useState(null);
 
   async function getContainerMovement() {
     var res;
@@ -26,16 +26,25 @@ const ContainerMovement = () => {
         res = await axiosConfig.get(
           `/container-movement/history/?${isEnable}=${value.rfid_tag_no}`
         );
-      const data = res.data.detail.map((item,index)=>({...item, key:index}))
+      const data = res.data.detail.map((item, index) => ({
+        ...item,
+        key: index,
+      }));
       setDataSource(data);
-      setHighlightedRowKey(data[0]?.key); // Set the key of the first row to be highlighted
+      setHighlightedRowKey(data[0]?.key);
 
       setColumns([
         {
           title: "Date",
           dataIndex: "scanning_dt",
           key: "scanning_dt",
-          render: (text) => <p>{format(text,"yyyy-MM-dd")}<br/>{new Date(text).toLocaleTimeString()}</p>,
+          render: (text) => (
+            <p>
+              {format(text, "yyyy-MM-dd")}
+              <br />
+              {new Date(text).toLocaleTimeString()}
+            </p>
+          ),
         },
         {
           title: "Container ID",
@@ -87,11 +96,11 @@ const ContainerMovement = () => {
   }
 
   function handleSubmit() {
-    if (!value.rfid_tag_no && !value.container_code) {
-      toast.error("Please enter either RFID Tag No. or Container Code");
-      return;
+    if (value.rfid_tag_no.length > 0 || value.container_code.length > 0) {
+      getContainerMovement();
     }
-    getContainerMovement();
+    toast.error("Please enter either RFID Tag No. or Container Code");
+    return;
   }
 
   useEffect(() => {}, []);
@@ -133,10 +142,12 @@ const ContainerMovement = () => {
           Search
         </button>
       </div>
-      <Table 
-        columns={columns} 
-        dataSource={dataSource} 
-        rowClassName={(record) => record.key === highlightedRowKey ? 'bg-light-blue' : ''} // Apply custom class
+      <Table
+        columns={columns}
+        dataSource={dataSource}
+        rowClassName={(record) =>
+          record.key === highlightedRowKey ? "bg-light-blue" : ""
+        }
       />
     </Layout>
   );

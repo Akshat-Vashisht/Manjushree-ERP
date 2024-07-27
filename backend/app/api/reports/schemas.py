@@ -15,7 +15,7 @@ class ContainerDetailsManjushreeSchema(BaseModel):
     container_location: str
     container_category: str
     container_code: str
-    rfig_tag_no: str
+    rfid_tag_no: str
     sku_code: str | None
     pick_list_code: str | None
 

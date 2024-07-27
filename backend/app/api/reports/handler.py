@@ -47,7 +47,7 @@ def get_containers_at_manjushree_details(db: Session):
             container_location=container.location_name,
             container_category=container.container_category,
             container_code=container.container_code,
-            rfig_tag_no=container.rfid_tag_no,
+            rfid_tag_no=container.rfid_tag_no,
             sku_code=container.sku_code,
             pick_list_code=container.pick_list_code
         )

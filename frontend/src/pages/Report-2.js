@@ -75,7 +75,7 @@ const Report2 = () => {
 
   return (
     <Layout>
-      <h1 className="font-semibold text-lg mb-5">Containers at Manjushree</h1>
+      <h1 className="font-semibold text-lg mb-5">Container Details (At Manjushree)</h1>
       <hr className="mb-5 text-slate-700" />
 
       <Table

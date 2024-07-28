@@ -86,7 +86,7 @@ const Report4 = () => {
   return (
     <Layout>
       <h1 className="font-semibold text-lg mb-5">
-      Container details (Vendor wise)
+      Container Details (Vendor wise)
       </h1>
       <hr className="mb-5 text-slate-700" />
       <Dropdown

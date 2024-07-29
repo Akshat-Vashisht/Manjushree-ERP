@@ -20,5 +20,5 @@ class UserCreateSchema(BaseModel):
 class UserUpdateSchema(BaseModel):
     user_code: str
     user_name: str
-    password: Optional[str]
+    password: Optional[str] = None
     role: int

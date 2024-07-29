@@ -1,9 +1,0 @@
-1. Change password field size in database model
-
-2. Implement pagination on server side
-
-3. Seeding for intial data
-
-4. Implemented last_updated/last_updated_dt fields to user_master table
-
-5. Implement logo functionality for business_entities table

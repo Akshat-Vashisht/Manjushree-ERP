@@ -42,93 +42,93 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route 
-          path="/1/user-master" 
+        <Route
+          path="/1/user-master"
           element={
-          <ProtectedRoute>
-            <UsersIndex />
-          </ProtectedRoute>
-          } 
+            <ProtectedRoute>
+              <UsersIndex />
+            </ProtectedRoute>
+          }
         />
-        <Route 
-          path="/1/sku-master" 
+        <Route
+          path="/1/sku-master"
           element={
-          <ProtectedRoute>
-            <SKUIndex />
-          </ProtectedRoute>
-          } 
+            <ProtectedRoute>
+              <SKUIndex />
+            </ProtectedRoute>
+          }
         />
-        <Route 
-          path="/1/business-entity-master" 
+        <Route
+          path="/1/business-entity-master"
           element={
-          <ProtectedRoute>
-            <BusinessEntityIndex />
-          </ProtectedRoute>
-          } 
+            <ProtectedRoute>
+              <BusinessEntityIndex />
+            </ProtectedRoute>
+          }
         />
-        <Route 
+        <Route
           path="/1/business-entity-master/create"
-          exact 
+          exact
           element={
-          <ProtectedRoute>
-            <CreateBusinessEntity />
-          </ProtectedRoute>
-          } 
+            <ProtectedRoute>
+              <CreateBusinessEntity />
+            </ProtectedRoute>
+          }
         />
-        <Route 
+        <Route
           path="/1/business-entity-master/:entityId"
-          exact 
+          exact
           element={
-          <ProtectedRoute>
-            <EditBusinessEntity />
-          </ProtectedRoute>
-          } 
-
+            <ProtectedRoute>
+              <EditBusinessEntity />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/1/reports/1"
           element={
             <ProtectedRoute>
-              <Report1/>
+              <Report1 />
             </ProtectedRoute>
           }
         />
-         <Route
+        <Route
           path="/1/reports/2"
           element={
             <ProtectedRoute>
-              <Report2/>
+              <Report2 />
             </ProtectedRoute>
           }
         />
-         <Route
+        <Route
           path="/1/reports/3"
           element={
             <ProtectedRoute>
-              <Report3/>
+              <Report3 />
             </ProtectedRoute>
           }
         />
-         <Route
+        <Route
           path="/1/reports/4"
           element={
             <ProtectedRoute>
-              <Report4/>
+              <Report4 />
             </ProtectedRoute>
           }
         />
-          <Route
+        <Route
           path="/1/container/movement"
           element={
             <ProtectedRoute>
-              <ContainerMovement/>
+              <ContainerMovement />
             </ProtectedRoute>
           }
         />
-         <Route
+        <Route
           path="/1/container/search"
           element={
             <ProtectedRoute>
-              <SearchContainer/>
+              <SearchContainer />
             </ProtectedRoute>
           }
         />

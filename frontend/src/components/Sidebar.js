@@ -2,6 +2,8 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { RxDashboard } from "react-icons/rx";
 import { GoGraph } from "react-icons/go";
+import { LuContainer, LuUserSquare, LuCaseUpper, LuLayers } from "react-icons/lu";
+
 import { LuContainer } from "react-icons/lu";
 import { TbReport } from "react-icons/tb";
 import { useSelector } from "react-redux";
@@ -37,6 +39,56 @@ const Sidebar = () => {
         </Link>
 
         <Link
+          to={`/${userRole}/user-master`}
+          className={`flex items-center justify-start pl-9 gap-x-2 py-3 text-center rounded-lg hover:bg-slate-700 ${
+            location.pathname == `/${userRole}/user-master`
+              ? "bg-slate-700 text-white"
+              : "bg-none text-slate-200"
+          }`}
+          >
+            <LuUserSquare className="text-xl" />
+            Users
+        </Link>
+        
+        <Link
+          to={`/${userRole}/sku-master`}
+          className={`flex items-center justify-start pl-9 gap-x-2 py-3 text-center rounded-lg hover:bg-slate-700 ${
+            location.pathname == `/${userRole}/sku-master`
+              ? "bg-slate-700 text-white"
+              : "bg-none text-slate-200"
+          }`}
+          >
+            <LuCaseUpper className="text-xl" />
+            SKUs
+        </Link>
+        
+        <Link
+          to={`/${userRole}/business-entity-master`}
+          className={`flex items-center justify-start pl-9 gap-x-2 py-3 text-center rounded-lg hover:bg-slate-700 ${
+            location.pathname == `/${userRole}/business-entity-master`
+              ? "bg-slate-700 text-white"
+              : "bg-none text-slate-200"
+          }`}
+          >
+            <LuLayers className="text-xl" />
+            Business Entities
+        </Link>
+
+
+        {/* <Link className="flex items-center justify-start pl-9 gap-x-2 py-3 text-center rounded-lg hover:bg-slate-700 text-slate-200">
+          <FiUser className="text-xl" />
+          Skills
+        </Link>
+        <Link className="flex items-center justify-start pl-9 gap-x-2 py-3 text-center rounded-lg hover:bg-slate-700 text-slate-200">
+          <GrInProgress />
+          Improvement
+        </Link>
+        {userRole === "admin" && (
+          <Link className="flex items-center justify-start pl-9 gap-x-2 py-3 text-center rounded-lg hover:bg-slate-700 text-slate-200">
+            <MdManageAccounts className="text-xl" />
+            Managers
+          </Link>
+        )} */}
           to={`/${userRole}/reports/1`}
           className={`flex items-center justify-start pl-9 gap-x-2 py-3 text-center rounded-lg hover:bg-slate-700 ${
             location.pathname.includes(`/${userRole}/reports/1`)

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, LargeBinary
 from sqlalchemy.orm import relationship
 from .database import Base
 
@@ -9,7 +9,7 @@ class UserMaster(Base):
     user_master_id = Column(Integer, primary_key=True, index=True)
     user_code = Column(String(10), nullable=False)
     user_name = Column(String(50), nullable=False)
-    password = Column(String(20), nullable=False)
+    password = Column(String(255), nullable=False)
     role = Column(Integer, nullable=False)
     is_active = Column(Boolean, nullable=False, default=True)
 
@@ -50,7 +50,7 @@ class BusinessEntityMaster(Base):
     telephone_no1 = Column(String(20))
     mobile_no1 = Column(String(15))
     email_id = Column(String(100))
-    logo = Column(String)  
+    logo = Column(LargeBinary)  
     is_client = Column(Boolean, nullable=False)
     is_vendor = Column(Boolean, nullable=False)
     is_transporter = Column(Boolean, nullable=False)

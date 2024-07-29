@@ -1,0 +1,11 @@
+Expected things related to UI/UX
+
+-- Forms
+    1. Correctly functioning tab indexes
+
+-- Tables
+    1. Scrollable Tables
+    2. Horizontal scroll for large tables(responsive behaviour)
+    3. Fixed column and scroll all other colums (e.g fixed actions column and scroll remainder)
+    4. On table page, only table should scroll page should not
+    

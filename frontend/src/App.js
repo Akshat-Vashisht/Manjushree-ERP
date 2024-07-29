@@ -7,11 +7,17 @@ import Report1 from "./pages/Report-1";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import AdminDashboard from "./pages/AdminDashboard";
 import useUserUtility from "./utils/useUserUtility";
+import UsersIndex from "./pages/User/Index";
+import SKUIndex from "./pages/SKU/Index";
+import BusinessEntityIndex from "./pages/BusinessEntity/Index";
+import CreateBusinessEntity from "./pages/BusinessEntity/Create";
+import EditBusinessEntity from "./pages/BusinessEntity/Edit";
 import Report2 from "./pages/Report-2";
 import Report3 from "./pages/Report-3";
 import Report4 from "./pages/Report-4";
 import ContainerMovement from "./pages/ContainerMovement";
 import SearchContainer from "./pages/SearchContainer";
+
 function App() {
   useUserUtility();
   return (
@@ -36,7 +42,48 @@ function App() {
             </ProtectedRoute>
           }
         />
-        
+        <Route 
+          path="/1/user-master" 
+          element={
+          <ProtectedRoute>
+            <UsersIndex />
+          </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/1/sku-master" 
+          element={
+          <ProtectedRoute>
+            <SKUIndex />
+          </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/1/business-entity-master" 
+          element={
+          <ProtectedRoute>
+            <BusinessEntityIndex />
+          </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/1/business-entity-master/create"
+          exact 
+          element={
+          <ProtectedRoute>
+            <CreateBusinessEntity />
+          </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/1/business-entity-master/:entityId"
+          exact 
+          element={
+          <ProtectedRoute>
+            <EditBusinessEntity />
+          </ProtectedRoute>
+          } 
+
         <Route
           path="/1/reports/1"
           element={

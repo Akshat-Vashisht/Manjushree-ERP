@@ -26,7 +26,7 @@ async def get_containers(
     except Exception as e:
         return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content={'detail': str(e)})
 
-@router.post('/', response_model=SKUSchema)
+@router.post('/', status_code=status.HTTP_201_CREATED, response_model=SKUSchema)
 async def create_sku(
     sku_input: SKUCreateSchema, 
     db: Session = Depends(get_db),

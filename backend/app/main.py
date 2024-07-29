@@ -27,6 +27,8 @@ from .models import Base
 
 Base.metadata.create_all(bind=engine)
 
+from .api.reports.router import router as reports_router
+
 app = FastAPI(debug=True, docs_url='/')
 app.include_router(container_master_router)
 app.include_router(container_movement_router)
@@ -39,6 +41,8 @@ app.include_router(auth_router)
 app.include_router(dashboard_router)
 app.include_router(user_master_router)
 app.include_router(business_entity_router)
+app.include_router(reports_router)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[

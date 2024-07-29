@@ -6,3 +6,7 @@
 *{
   font-family: 'Poppins';
 }
+
+.bg-light-blue {
+  background-color: #e0f7fa; /* Light blue color */
+}

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { RiAppleLine, RiGoogleLine } from "react-icons/ri";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { setLoggedin, addUser } from "../store/features/common/userSlice";
 import { axiosConfig } from "../axios/axiosConfig";
@@ -28,12 +27,11 @@ const Login = () => {
   }
   async function login() {
     if (checkFields()) {
-      console.log(data);
       try {
         setLoading(true);
         const promise = axiosConfig.post("/auth/login", data);
         const res = await promise;
-        console.log(res);
+
         toast.promise(promise, {
           loading: "Logging in",
           success: "Logged in Successfully",
@@ -42,12 +40,11 @@ const Login = () => {
         if (res.status == 200) {
           dispatch(setLoggedin(true));
           const userRes = await axiosConfig.get("/auth/users/me");
-          console.log(userRes);
+
           dispatch(addUser(userRes.data));
           const userRole = userRes.data.role;
           navigate(`/${userRole}/dashboard`);
         }
-        console.log("user login api response", res);
       } catch (error) {
         toast.error(error.response.data.detail);
       } finally {
@@ -98,9 +95,9 @@ const Login = () => {
               className="focus:outline-none border border-slate-200 rounded-full py-2 px-3"
             />
           </div>
-          <span className="text-sm text-blue-500 cursor-pointer">
+          {/* <span className="text-sm text-blue-500 cursor-pointer">
             Forget Password?
-          </span>
+          </span> */}
         </div>
         <button
           className="bg-blue-500 text-white w-full py-2 rounded-full"

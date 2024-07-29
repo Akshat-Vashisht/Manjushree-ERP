@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { RiAppleLine, RiGoogleLine } from "react-icons/ri";
+import React, { useState } from "react";
 import { LuEye, LuEyeOff } from "react-icons/lu";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -12,6 +11,7 @@ const Signup = () => {
     user_name: "",
     password: "",
     cnfPassword:"",
+    // Change to role based in future
     role: 1,
   });
 
@@ -51,7 +51,6 @@ const Signup = () => {
       try {
         setLoading(true);
         const res = await axiosConfig.post("/auth/register", data);
-        console.log(res)
         toast.success("User created successfully");
         if (res.status === 200) {
           navigate("/", {
@@ -64,7 +63,7 @@ const Signup = () => {
         } else {
           toast.error("Something went wrong");
         }
-        console.log(error);
+
       } finally {
         setLoading(false);
       }

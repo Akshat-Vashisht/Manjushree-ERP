@@ -10,10 +10,9 @@ import { axiosConfig } from "../axios/axiosConfig";
 const useUserUtility = () => {
   const dispatch = useDispatch();
   const isLoggedin = useSelector((state) => state.user.isLoggedin);
-  const state = useSelector((state)=>state);
+  const state = useSelector((state) => state);
 
   useEffect(() => {
-    console.log("state",state)
     const fetchUserDetails = async () => {
       try {
         // if (Object.keys(userData).length === 0) {
@@ -23,7 +22,6 @@ const useUserUtility = () => {
         dispatch(setIsSessionLoaded(true));
         // }
       } catch (error) {
-        console.log(error)
         if (error.response && error.response.status === 401) {
           dispatch(setLoggedin(false));
           // todo: navigate to login

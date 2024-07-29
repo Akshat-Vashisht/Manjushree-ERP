@@ -5,7 +5,7 @@ from ...models import ContainerMovement
 
 def get_dashboard_4(db: Session):
     total_empty_count = db.query(func.count(ContainerMovement.container_movement_id)).filter(
-        ContainerMovement.sku_master_id == None,
+        ContainerMovement.sku_master_id.is_(None),
         ContainerMovement.business_entity_name == 'Manjushree'
     ).scalar()
 
@@ -14,7 +14,7 @@ def get_dashboard_4(db: Session):
         func.count(ContainerMovement.container_movement_id).label(
             'total_containers')
     ).filter(
-        ContainerMovement.sku_master_id == None,
+        ContainerMovement.sku_master_id.is_(None),
         ContainerMovement.business_entity_name == 'Manjushree'
     ).group_by(ContainerMovement.location_display_text).all()
 
@@ -30,7 +30,7 @@ def get_dashboard_4(db: Session):
 
 def get_dashboard_3(db: Session):
     total_empty_count = db.query(func.count(ContainerMovement.container_movement_id)).filter(
-        ContainerMovement.sku_master_id == None,
+        ContainerMovement.sku_master_id.is_(None),
         ContainerMovement.business_entity_name == 'Manjushree'
     ).scalar()
 
@@ -39,7 +39,7 @@ def get_dashboard_3(db: Session):
         func.count(ContainerMovement.container_movement_id).label(
             'total_containers')
     ).filter(
-        ContainerMovement.sku_master_id == None,
+        ContainerMovement.sku_master_id.is_(None),
         ContainerMovement.business_entity_name == 'Manjushree'
     ).group_by(ContainerMovement.container_category).all()
 

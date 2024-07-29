@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import { VictoryPie, VictoryBar, VictoryChart, VictoryAxis } from "victory";
-import { RxChevronRight } from "react-icons/rx";
 import { axiosConfig } from "../axios/axiosConfig";
 
 const AdminDashboard = () => {
@@ -20,7 +19,6 @@ const AdminDashboard = () => {
         axiosConfig.get("/dashboard/dashboard-3"),
         axiosConfig.get("/dashboard/dashboard-4"),
       ]);
-      console.log(res1, res2, res3, res4);
       setDashboard1(res1.data);
       setDashboard2(res2.data);
       setDashboard3(res3.data);

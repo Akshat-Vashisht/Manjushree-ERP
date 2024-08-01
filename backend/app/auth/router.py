@@ -7,10 +7,7 @@ from .handler import ACCESS_TOKEN_EXPIRE_MINUTES, authenticate_user, create_acce
 from ..utils import get_db
 from ..models import UserMaster
 
-router = APIRouter(
-    prefix='/auth',
-    tags=['auth']
-)
+router = APIRouter()
 
 
 @router.post('/register', response_model=UserResponse)

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, LargeBinary
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, LargeBinary, Text
 from sqlalchemy.orm import relationship
 from .database import Base
 
@@ -64,7 +64,7 @@ class SKUMaster(Base):
 
     sku_master_id = Column(Integer, primary_key=True, index=True)
     sku_code = Column(String(10), nullable=False)
-    sku_name = Column(String(30), nullable=False)
+    sku_name = Column(Text, nullable=False)
     is_active = Column(Boolean, nullable=False, default=True)
     last_updated_dt = Column(DateTime, nullable=False)
     last_updated_by = Column(Integer, nullable=False)

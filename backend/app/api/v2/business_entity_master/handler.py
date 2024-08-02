@@ -32,6 +32,7 @@ def _get_business_entity(db: Session, id: int):
         return 0
     
     return entity
+
 def _create_business_entity(db: Session, be_input: BusinessEntityCreateSchema, last_updated_by: int):
     # Check for unique business_entity_name
     exists = (

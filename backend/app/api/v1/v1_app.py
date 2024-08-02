@@ -1,5 +1,4 @@
 from fastapi import FastAPI
-from .business_entity_master.router import router as business_entity_master_router
 from .container_category_master.router import router as container_category_master_router
 from .container_master.router import router as container_master_router
 from .container_movement_master.router import router as container_movement_master_router
@@ -17,8 +16,6 @@ v1_app = FastAPI(
     docs_url='/'
 )
 
-v1_app.include_router(business_entity_master_router, tags=[
-                      'Business Entity Master'], prefix='/business-entities')
 v1_app.include_router(container_category_master_router, tags=[
                       'Container Category Master'], prefix='/container-categories')
 v1_app.include_router(container_master_router, tags=[

@@ -10,23 +10,23 @@ from ..models import UserMaster
 router = APIRouter()
 
 
-@router.post('/register', response_model=UserResponse)
-async def register_user(user: UserCreate, db: Session = Depends(get_db)):
-    existing_user = get_user(db, user.user_name)
-    if existing_user:
-        return JSONResponse(status_code=status.HTTP_409_CONFLICT, content={"detail": "Username already registered"})
-    hashed_password = get_password_hash(user.password)
-    user_code = get_user_code(db)
-    new_user = UserMaster(
-        user_code=user_code,
-        user_name=user.user_name,
-        password=hashed_password,
-        role=user.role
-    )
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
-    return new_user
+# @router.post('/register', response_model=UserResponse)
+# async def register_user(user: UserCreate, db: Session = Depends(get_db)):
+#     existing_user = get_user(db, user.user_name)
+#     if existing_user:
+#         return JSONResponse(status_code=status.HTTP_409_CONFLICT, content={"detail": "Username already registered"})
+#     hashed_password = get_password_hash(user.password)
+#     user_code = get_user_code(db)
+#     new_user = UserMaster(
+#         user_code=user_code,
+#         user_name=user.user_name,
+#         password=hashed_password,
+#         role=user.role
+#     )
+#     db.add(new_user)
+#     db.commit()
+#     db.refresh(new_user)
+#     return new_user
 
 
 @router.post('/login', response_model=Token)

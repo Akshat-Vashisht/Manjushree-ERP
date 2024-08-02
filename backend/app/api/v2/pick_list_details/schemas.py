@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class PickListDetailsSchema(BaseModel):
     pick_list_master_id: int
     sku_master_id: int
@@ -17,3 +18,12 @@ class PickListResponseSchema(BaseModel):
     sku_code: str
     sku_name: str
     quantity: int
+
+
+class PickListCreateSchema(BaseModel):
+    pick_list_master_id: int
+    sku_master_id: int
+    quantity: int
+
+    class Config:
+        from_attributes = True

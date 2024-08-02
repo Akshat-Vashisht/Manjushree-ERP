@@ -23,7 +23,7 @@ v2_auth_router = APIRouter(
     tags=['AUTH']
 )
 v2_auth_router.add_api_route(
-    '/login', auth_router.routes[1].endpoint, methods=['POST'])
+    '/login', auth_router.routes[0].endpoint, methods=['POST'])
 v2_auth_router.add_api_route(
-    '/logout', auth_router.routes[3].endpoint, methods=['POST'])
+    '/logout', auth_router.routes[2].endpoint, methods=['POST'])
 v2_app.include_router(v2_auth_router)

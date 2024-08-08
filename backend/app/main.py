@@ -21,6 +21,7 @@ app.add_middleware(
         'http://127.0.0.1:3000',
         'http://localhost:3000',
         'https://redi-vs.vercel.app',
+        'https://test-redi-vs.vercel.app/'
     ],
     allow_credentials=True,
     allow_methods=['*'],

@@ -26,23 +26,27 @@ def fetch_pick_list(db: Session, code: int):
             return pick_list_details
 
 
-def add_pick_list(db: Session, pick_list: PickListCreateSchema):
+def add_pick_list(db: Session, pick_list_array: list[PickListCreateSchema]):
 
+    new_pick_list = []
     # TODO: Change hardcoded value (To be passed from the frontend)
-    pick_list_master = PickListMaster(
-        pick_list_code=pick_list.pick_list_code,
-        business_entity_code=pick_list.business_entity_code,
-        invoice_number=pick_list.invoice_number,
-        pick_list_status=True,
-        is_aborted=False,
-        creation_dt=datetime.datetime.now(datetime.UTC),
-        closed_by=1
-    )
+    for pick_list in pick_list_array:
 
-    db.add(pick_list_master)
+        pick_list_master = PickListMaster(
+            pick_list_code=pick_list.pick_list_code,
+            business_entity_code=pick_list.business_entity_code,
+            invoice_number=pick_list.invoice_number,
+            pick_list_status=True,
+            is_aborted=False,
+            creation_dt=datetime.datetime.now(datetime.UTC),
+            closed_by=1
+        )
+
+        new_pick_list.append(pick_list_master)
+
+    db.bulk_save_objects(new_pick_list)
     db.commit()
-    db.refresh(pick_list_master)
-
+    
     return pick_list_master
 
 

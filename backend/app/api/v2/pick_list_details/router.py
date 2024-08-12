@@ -36,10 +36,10 @@ async def get_all_pick_list_details(db: Session = Depends(get_db)):
 
 
 @router.post('/', response_model=PickListDetailsSchema)
-async def add_pick_list_details(pick_list_details: PickListCreateSchema, db: Session = Depends(get_db)):
+async def add_pick_list_details(pick_list_details: list[PickListCreateSchema], allow_partial_inserts: bool, db: Session = Depends(get_db)):
     try:
         pick_list_detail = jsonable_encoder(
-            create_pick_list_details(db, pick_list_details))
+            create_pick_list_details(db, pick_list_details, allow_partial_inserts))
         return JSONResponse(status_code=status.HTTP_201_CREATED, content={'detail': pick_list_detail})
     except DataNotFoundError as e:
         return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={'detail': str(e)})

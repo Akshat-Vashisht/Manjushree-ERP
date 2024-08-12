@@ -2,16 +2,17 @@ from sqlalchemy import func
 from sqlalchemy.orm import Session
 from ....models import BusinessEntityMaster
 from ....utils import now, paginate
-from .schemas import BusinessEntityCreateSchema, BusinessEntityUpdateSchema, BusinessEntitySchema,CreateForm
+from .schemas import BusinessEntityCreateSchema, BusinessEntityUpdateSchema, BusinessEntitySchema, CreateForm
 from fastapi import UploadFile, File
 from typing import Annotated, Optional, Union
 import os
 import shutil
 
+
 def _list_of_business_entities(db: Session, page: int, page_size: int):
     # return paginate(db.query(BusinessEntityMaster), BusinessEntitySchema, page, page_size)
     offset = page_size * (page - 1)
-    
+
     _query = db.query(BusinessEntityMaster)
 
     record_count = _query.count()
@@ -25,42 +26,47 @@ def _list_of_business_entities(db: Session, page: int, page_size: int):
 
     return pagination
 
+
 def _get_business_entity(db: Session, id: int):
     entity = db.get(BusinessEntityMaster, id)
 
     if not entity:
         return 0
-    
+
     return entity
 
-def _create_business_entity(db: Session, be_input: BusinessEntityCreateSchema, last_updated_by: int):
-    # Check for unique business_entity_name
-    exists = (
-        db.query(func.count())
+
+def _create_business_entity(db: Session, be_input: list[BusinessEntityCreateSchema], last_updated_by: int, allow_partial_inserts: bool):
+
+    new_entities = []
+    for be in be_input:
+        # Check for unique business_entity_name
+        exists = (
+            db.query(func.count())
             .select_from(BusinessEntityMaster)
-            .where(BusinessEntityMaster.business_entity_name == be_input.business_entity_name)
+            .where(BusinessEntityMaster.business_entity_name == be.business_entity_name)
             .scalar()
-    )
+        )
 
-    if exists > 0:
-        return 1
-    
-    data = be_input.model_dump()
-    # data = be_input
+        if exists > 0:
+            continue  # Skip this entry if it already exists
 
-    data.update({
-        'last_updated_dt': now(return_string=True),
-        'last_updated_by': last_updated_by
-    })
+        # Prepare the data
+        data = be.model_dump()
+        data.update({
+            'last_updated_dt': now(return_string=True),
+            'last_updated_by': last_updated_by
+        })
 
-    entity = BusinessEntityMaster(**data)
-    
-    db.add(entity)
-    db.commit()
+        entity = BusinessEntityMaster(**data)
+        new_entities.append(entity)
 
-    db.refresh(entity)
+    if new_entities:
+        db.bulk_save_objects(new_entities)
+        db.commit()
 
-    return entity
+    return new_entities
+
 
 def _update_business_entity(
     db: Session,
@@ -77,15 +83,15 @@ def _update_business_entity(
     # Check for unique business_entity_name
     exists = (
         db.query(func.count())
-            .select_from(BusinessEntityMaster)
-            .where(BusinessEntityMaster.business_entity_name == be_input.business_entity_name)
-            .where(BusinessEntityMaster.business_entity_master_id != id)
-            .scalar()
+        .select_from(BusinessEntityMaster)
+        .where(BusinessEntityMaster.business_entity_name == be_input.business_entity_name)
+        .where(BusinessEntityMaster.business_entity_master_id != id)
+        .scalar()
     )
 
     if exists > 0:
         return 1
-    
+
     data = be_input.model_dump()
     data.update({
         "last_updated_dt": now(return_string=True),
@@ -94,8 +100,8 @@ def _update_business_entity(
 
     (
         db.query(BusinessEntityMaster)
-            .filter(BusinessEntityMaster.business_entity_master_id == id)
-            .update(data, synchronize_session=False) 
+        .filter(BusinessEntityMaster.business_entity_master_id == id)
+        .update(data, synchronize_session=False)
     )
 
     db.commit()
@@ -103,7 +109,8 @@ def _update_business_entity(
     entity = db.get(BusinessEntityMaster, id)
 
     return entity
-        
+
+
 def _soft_delete_business_entity(
     db: Session,
     id: int,
@@ -113,7 +120,7 @@ def _soft_delete_business_entity(
 
     if not entity:
         return 0
-    
+
     entity.is_active = False
     entity.last_updated_by = last_updated_by
     entity.last_updated_dt = now(return_string=True)
@@ -124,9 +131,11 @@ def _soft_delete_business_entity(
     return 1
 
 # Abandoned temporarily till file issue is resolved
+
+
 async def _upload_logo(
-    db: Session, 
-    id: int, 
+    db: Session,
+    id: int,
     logo: UploadFile,
     last_updated_by: int,
 ):

@@ -26,7 +26,7 @@ async def get_skus(
 
 @ router.post('/', status_code=status.HTTP_201_CREATED, response_model=SKUSchema)
 async def create_sku(
-    sku_input: SKUCreateSchema,
+    sku_input: list[SKUCreateSchema],
     db: Session = Depends(get_db),
     user=Depends(get_current_user)
 ):

@@ -4,24 +4,31 @@ from ....utils import now, fetch_data
 from .schemas import SKUCreateSchema
 import datetime
 
+
 def fetch_scan_locations(db: Session):
     sku_list = db.query(SKUMaster).all()
     return sku_list
 
-def add_sku(db: Session, sku_input: SKUCreateSchema, last_updated_by: int):
-    data = sku_input.model_dump()
 
-    data.update({
-        "is_active": True,
-        "last_updated_dt": now(return_string=True),
-        "last_updated_by": last_updated_by
-    })
-    sku = SKUMaster(**data)
+def add_sku(db: Session, sku_input: list[SKUCreateSchema], last_updated_by: int):
 
-    db.add(sku)
+    new_skus = []
+    for sku in sku_input:
+        data = SKUMaster(
+            sku_code=sku.sku_code,
+            sku_name=sku.sku_name,
+            is_active=True,
+            last_updated_dt=now(return_string=True),
+            last_updated_by=last_updated_by
+        )
+
+        new_skus.append(data)
+
+    db.bulk_save_objects(new_skus)
     db.commit()
 
-    return sku
+    return new_skus
+
 
 def update_sku(id: int, sku_input: SKUCreateSchema, last_updated_by: int, db: Session):
     sku = fetch_data(db, SKUMaster, 'sku_master_id', id)
@@ -37,6 +44,7 @@ def update_sku(id: int, sku_input: SKUCreateSchema, last_updated_by: int, db: Se
 
     return sku
 
+
 def soft_delete_sku(id: int, last_updated_by: int, db: Session):
     sku = fetch_data(db, SKUMaster, 'sku_master_id', id)
 
@@ -46,4 +54,3 @@ def soft_delete_sku(id: int, last_updated_by: int, db: Session):
 
     db.add(sku)
     db.commit()
-    

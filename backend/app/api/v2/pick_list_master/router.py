@@ -25,9 +25,9 @@ async def get_pick_lists(code: int, db: Session = Depends(get_db)):
 
 
 @router.post('/', response_model=PickListSchema)
-async def create_pick_list(pick_list: PickListCreateSchema, db: Session = Depends(get_db)):
+async def create_pick_list(pick_list_array: list[PickListCreateSchema], db: Session = Depends(get_db)):
     try:
-        pick_list = jsonable_encoder(add_pick_list(db, pick_list))
+        pick_list = jsonable_encoder(add_pick_list(db, pick_list_array))
         return JSONResponse(status_code=status.HTTP_201_CREATED, content={'detail': pick_list})
     except Exception as e:
         return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content={'detail': str(e)})

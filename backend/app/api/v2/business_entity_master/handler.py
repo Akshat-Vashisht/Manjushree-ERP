@@ -36,15 +36,15 @@ def _get_business_entity(db: Session, id: int):
     return entity
 
 
-def _create_business_entity(db: Session, be_input: list[BusinessEntityCreateSchema], last_updated_by: int, allow_partial_inserts: bool):
+def _create_business_entity(db: Session, be_input: list[BusinessEntityCreateSchema], last_updated_by: int):
 
     new_entities = []
     for be in be_input:
-        # Check for unique business_entity_name
+        # Check for unique business_entity_code
         exists = (
             db.query(func.count())
             .select_from(BusinessEntityMaster)
-            .where(BusinessEntityMaster.business_entity_name == be.business_entity_name)
+            .where(BusinessEntityMaster.business_entity_code == be.business_entity_code)
             .scalar()
         )
 
@@ -54,6 +54,7 @@ def _create_business_entity(db: Session, be_input: list[BusinessEntityCreateSche
         # Prepare the data
         data = be.model_dump()
         data.update({
+            'is_active': True,
             'last_updated_dt': now(return_string=True),
             'last_updated_by': last_updated_by
         })
@@ -80,11 +81,11 @@ def _update_business_entity(
     if not entity:
         return 0
 
-    # Check for unique business_entity_name
+    # Check for unique business_entity_code
     exists = (
         db.query(func.count())
         .select_from(BusinessEntityMaster)
-        .where(BusinessEntityMaster.business_entity_name == be_input.business_entity_name)
+        .where(BusinessEntityMaster.business_entity_code == be_input.business_entity_code)
         .where(BusinessEntityMaster.business_entity_master_id != id)
         .scalar()
     )

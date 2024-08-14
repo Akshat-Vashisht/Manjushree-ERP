@@ -10,11 +10,12 @@ class BusinessEntitySchema(BaseModel):
     business_entity_code: str
     business_entity_name: str
     address: str
+    address2: str
     city: str
     district: Optional[str] = None
     state: Optional[str] = None
     country: Optional[str] = None
-    pin: int
+    pin: str
     telephone_no1: Optional[str] = None
     mobile_no1: Optional[str] = None
     email_id: Optional[str] = None
@@ -30,15 +31,16 @@ class BusinessEntitySchema(BaseModel):
         from_attributes = True
 
 class BusinessEntityCreateSchema(BaseModel):
-    business_entity_code: str = Field(max_length=10)
+    business_entity_code: str = Field(max_length=50)
     business_entity_name: str = Field(max_length=100)
-    address: str = Field(max_length=400)
+    address: str = Field(max_length=500)
+    address2: Optional[str] = Field(max_length=500)
     city: str = Field(max_length=50)
     district: Optional[str] = Field(max_length=50, default=None)
     state: Optional[str] = Field(max_length=50, default=None) 
     country: Optional[str] = Field(max_length=50, default=None) 
-    pin: int = Field(ge=100000, le=999999, default=100000)
-    telephone_no1: Optional[str] = Field(max_length=20, default=None)
+    pin: str = Field(max_length=25)
+    telephone_no1: Optional[str] = Field(max_length=50, default=None)
     mobile_no1: Optional[str] = Field(max_length=15, default=None)
     email_id: Optional[str] = Field(max_length=100, default=None)
     # logo: Optional[bytes] = None

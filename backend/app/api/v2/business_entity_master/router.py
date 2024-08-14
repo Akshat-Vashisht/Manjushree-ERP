@@ -1,4 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status, File, UploadFile, Form
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from .handler import _list_of_business_entities, _create_business_entity, _update_business_entity, _soft_delete_business_entity, _get_business_entity, _upload_logo
 from ....utils import get_db, UploadHelper
@@ -36,21 +38,20 @@ def get_business_entity(
     return entity
 
 
-@router.post('/', status_code=status.HTTP_201_CREATED, response_model=BusinessEntitySchema)
+@router.post('/', status_code=status.HTTP_201_CREATED, response_model=list[BusinessEntitySchema])
 def create_business_entity(
     be_input: list[BusinessEntityCreateSchema],
     db: Session = Depends(get_db),
     user=Depends(get_current_user)
 ):
-    result = _create_business_entity(db, be_input, user.user_master_id)
-
-    # Result returend integer since a record with given business_entity_name already exists
-    if isinstance(result, int) and result == 1:
-        detail = {"error": True,
-                  "message": "Business Entity with given name already exists."}
-        raise unique_validations_fail_exception(detail)
-
-    return result
+    try:
+        result = jsonable_encoder(_create_business_entity(
+            db, be_input, user.user_master_id))
+        if not result:
+            return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content={'detail': 'No unique business entity code found.'})
+        return JSONResponse(status_code=status.HTTP_201_CREATED, content=result)
+    except Exception as e:
+        return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content={'detail': str(e)})
 
 
 @router.patch('/{id}', response_model=BusinessEntitySchema)

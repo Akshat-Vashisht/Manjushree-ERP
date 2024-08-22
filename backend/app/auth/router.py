@@ -29,8 +29,28 @@ router = APIRouter()
 #     return new_user
 
 
+# UNCOMMENT FOR COOKIE BASED LOGIN
+
+# @router.post('/login', response_model=Token)
+# async def login_for_access_token(user_login: UserLogin, response: Response, db: Session = Depends(get_db)):
+#     user = authenticate_user(db, user_login.user_name, user_login.password)
+#     if not user:
+#         raise HTTPException(
+#             status_code=status.HTTP_401_UNAUTHORIZED,
+#             detail="Incorrect username or password"
+#         )
+#     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+#     access_token = create_access_token(
+#         data={"sub": user.user_name}, expires_delta=access_token_expires
+#     )
+
+#     response.set_cookie(key="access_token",
+#                         value=access_token, httponly=True, samesite='none', secure=True)
+
+#     return {"access_token": access_token, "token_type": "bearer"}
+
 @router.post('/login', response_model=Token)
-async def login_for_access_token(user_login: UserLogin, response: Response, db: Session = Depends(get_db)):
+async def login_for_access_token(user_login: UserLogin, db: Session = Depends(get_db)):
     user = authenticate_user(db, user_login.user_name, user_login.password)
     if not user:
         raise HTTPException(
@@ -42,11 +62,7 @@ async def login_for_access_token(user_login: UserLogin, response: Response, db: 
         data={"sub": user.user_name}, expires_delta=access_token_expires
     )
 
-    response.set_cookie(key="access_token",
-                        value=access_token, httponly=True, samesite='none', secure=True)
-
     return {"access_token": access_token, "token_type": "bearer"}
-
 
 @router.get('/users/me', response_model=UserResponse)
 async def read_users_me(current_user: UserMaster = Depends(get_current_user)):

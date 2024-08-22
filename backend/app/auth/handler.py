@@ -54,17 +54,53 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     return encoded_jwt
 
 
+# async def get_current_user(
+#     db: Session = Depends(get_db),
+#     access_token: str = Cookie(None)
+# ):
+#     if access_token is None:
+#         raise HTTPException(
+#             status_code=status.HTTP_401_UNAUTHORIZED,
+#             detail="Not authenticated",
+#         )
+#     try:
+#         payload = jwt.decode(access_token, SECRET_KEY, algorithms=[ALGORITHM])
+#         username: str = payload.get("sub")
+#         if username is None:
+#             raise HTTPException(
+#                 status_code=status.HTTP_401_UNAUTHORIZED,
+#                 detail="Invalid authentication credentials",
+#             )
+#         user = get_user(db, username)
+#         if user is None:
+#             raise HTTPException(
+#                 status_code=status.HTTP_401_UNAUTHORIZED,
+#                 detail="User not found",
+#             )
+#         return user
+#     except jwt.ExpiredSignatureError:
+#         raise HTTPException(
+#             status_code=status.HTTP_401_UNAUTHORIZED,
+#             detail="Token has expired",
+#         )
+#     except jwt.InvalidTokenError:
+#         raise HTTPException(
+#             status_code=status.HTTP_401_UNAUTHORIZED,
+#             detail="Invalid token",
+#         )
+
+# UNCOMMENT FOR COOKIE BASED LOGIN
 async def get_current_user(
-    db: Session = Depends(get_db),
-    access_token: str = Cookie(None)
+    token: str,
+    db: Session = Depends(get_db)
 ):
-    if access_token is None:
+    if token is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Not authenticated",
         )
     try:
-        payload = jwt.decode(access_token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
         if username is None:
             raise HTTPException(

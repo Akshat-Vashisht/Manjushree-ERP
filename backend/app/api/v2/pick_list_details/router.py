@@ -13,7 +13,7 @@ router.dependencies = [Depends(get_current_user)]
 
 
 @router.get('/{pick_list_details_id}', response_model=list[PickListResponseSchema])
-async def get_pick_list_details_by_id(token: str, pick_list_details_id: int, db: Session = Depends(get_db)):
+async def get_pick_list_details_by_id(pick_list_details_id: int, db: Session = Depends(get_db)):
     try:
         pick_list_details = jsonable_encoder(
             fetch_pick_list_details(db, pick_list_details_id))
@@ -25,7 +25,7 @@ async def get_pick_list_details_by_id(token: str, pick_list_details_id: int, db:
 
 
 @router.get('/', response_model=list[PickListResponseSchema])
-async def get_all_pick_list_details(token: str, db: Session = Depends(get_db)):
+async def get_all_pick_list_details(db: Session = Depends(get_db)):
     try:
         pick_list_details = jsonable_encoder(fetch_all_pick_list_details(db))
         return JSONResponse(status_code=status.HTTP_200_OK, content={'detail': pick_list_details})
@@ -36,7 +36,7 @@ async def get_all_pick_list_details(token: str, db: Session = Depends(get_db)):
 
 
 @router.post('/', response_model=PickListDetailsSchema)
-async def add_pick_list_details(token: str, pick_list_details: list[PickListCreateSchema], allow_partial_inserts: bool, db: Session = Depends(get_db)):
+async def add_pick_list_details(pick_list_details: list[PickListCreateSchema], allow_partial_inserts: bool, db: Session = Depends(get_db)):
     try:
         pick_list_detail = jsonable_encoder(
             create_pick_list_details(db, pick_list_details, allow_partial_inserts))
@@ -48,7 +48,7 @@ async def add_pick_list_details(token: str, pick_list_details: list[PickListCrea
 
 
 @router.patch('/{pick_list_id}/')
-async def update_pick_list(token: str, pick_list_id: int, quantity: int, response: Response, db: Session = Depends(get_db)):
+async def update_pick_list(pick_list_id: int, quantity: int, response: Response, db: Session = Depends(get_db)):
     try:
         update_pick_list_details(db, pick_list_id, quantity)
         response.status_code = status.HTTP_204_NO_CONTENT
@@ -59,7 +59,7 @@ async def update_pick_list(token: str, pick_list_id: int, quantity: int, respons
 
 
 @router.delete('/{pick_list_id}')
-async def delete_pick_list(token: str, pick_list_id: int, response: Response, db: Session = Depends(get_db)):
+async def delete_pick_list(pick_list_id: int, response: Response, db: Session = Depends(get_db)):
     try:
         delete_pick_list_details(db, pick_list_id)
         response.status_code = status.HTTP_204_NO_CONTENT

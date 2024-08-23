@@ -15,7 +15,6 @@ router = APIRouter()
 
 @router.get('/')
 def list_of_business_entities(
-    token: str,
     db: Session = Depends(get_db),
     page: int = 1,
     page_size: int = 10,
@@ -26,7 +25,6 @@ def list_of_business_entities(
 
 @router.get('/{id}', response_model=BusinessEntitySchema)
 def get_business_entity(
-    token: str,
     id: int,
     db: Session = Depends(get_db),
     user=Depends(get_current_user)
@@ -42,7 +40,6 @@ def get_business_entity(
 
 @router.post('/', status_code=status.HTTP_201_CREATED, response_model=list[BusinessEntitySchema])
 def create_business_entity(
-    token: str,
     be_input: list[BusinessEntityCreateSchema],
     db: Session = Depends(get_db),
     user=Depends(get_current_user)
@@ -59,7 +56,6 @@ def create_business_entity(
 
 @router.patch('/{id}', response_model=BusinessEntitySchema)
 def update_business_entity(
-    token: str,
     id: int,
     be_input: BusinessEntityUpdateSchema,
     db: Session = Depends(get_db),
@@ -83,7 +79,6 @@ def update_business_entity(
 
 @router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT)
 def delete_business_entity(
-    token: str,
     id: int,
     db: Session = Depends(get_db),
     user=Depends(get_current_user)

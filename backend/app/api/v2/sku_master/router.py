@@ -15,7 +15,6 @@ router.dependencies = [Depends(get_current_user)]
 
 @ router.get('/', response_model=list[SKUSchema])
 async def get_skus(
-    token: str,
     db: Session = Depends(get_db),
     page: int = 1,
     page_size: int = 10,
@@ -31,7 +30,6 @@ async def get_skus(
 
 @ router.post('/', status_code=status.HTTP_201_CREATED, response_model=list[SKUSchema])
 async def create_sku(
-    token: str,
     sku_input: list[SKUCreateSchema],
     db: Session = Depends(get_db),
     user=Depends(get_current_user)
@@ -50,7 +48,6 @@ async def create_sku(
 
 @ router.patch('/{id}', response_model=SKUSchema)
 async def update_sku_details(
-    token: str,
     id: int,
     sku_input: SKUCreateSchema,
     db: Session = Depends(get_db),
@@ -72,7 +69,6 @@ async def update_sku_details(
 
 @ router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT)
 async def delete_sku(
-    token: str,
     id: int,
     db: Session = Depends(get_db),
     user=Depends(get_current_user)

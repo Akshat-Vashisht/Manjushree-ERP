@@ -14,7 +14,7 @@ router.dependencies = [Depends(get_current_user)]
 
 
 @router.get('/{code}', response_model=list[PickListSchema])
-async def get_pick_lists(token: str, code: int, db: Session = Depends(get_db)):
+async def get_pick_lists(code: int, db: Session = Depends(get_db)):
     try:
         pick_list = jsonable_encoder(fetch_pick_list(db, code))
         return JSONResponse(status_code=status.HTTP_200_OK, content={'detail': pick_list})
@@ -25,7 +25,7 @@ async def get_pick_lists(token: str, code: int, db: Session = Depends(get_db)):
 
 
 @router.post('/', response_model=PickListSchema)
-async def create_pick_list(token: str, pick_list_array: list[PickListCreateSchema], db: Session = Depends(get_db)):
+async def create_pick_list(pick_list_array: list[PickListCreateSchema], db: Session = Depends(get_db)):
     try:
         pick_list = jsonable_encoder(add_pick_list(db, pick_list_array))
         return JSONResponse(status_code=status.HTTP_201_CREATED, content={'detail': pick_list})
@@ -34,7 +34,7 @@ async def create_pick_list(token: str, pick_list_array: list[PickListCreateSchem
 
 
 @router.patch('/{pick_list_id}')
-async def update_pick_list(token: str, pick_list_id: int, response: Response, db: Session = Depends(get_db)):
+async def update_pick_list(pick_list_id: int, response: Response, db: Session = Depends(get_db)):
     try:
         update_pick_list_status(db, pick_list_id)
         response.status_code = status.HTTP_204_NO_CONTENT
@@ -45,7 +45,7 @@ async def update_pick_list(token: str, pick_list_id: int, response: Response, db
 
 
 @router.delete('/{pick_list_id}')
-async def delete_pick_list(token: str, pick_list_id: int, response: Response, db: Session = Depends(get_db)):
+async def delete_pick_list(pick_list_id: int, response: Response, db: Session = Depends(get_db)):
     try:
         delete_pick_list_data(db, pick_list_id)
         response.status_code = status.HTTP_204_NO_CONTENT

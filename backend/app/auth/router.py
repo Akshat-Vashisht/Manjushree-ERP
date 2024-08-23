@@ -1,6 +1,7 @@
 from datetime import timedelta
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from fastapi.responses import JSONResponse
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from .schemas import UserCreate, Token, UserLogin, UserResponse
 from .handler import ACCESS_TOKEN_EXPIRE_MINUTES, authenticate_user, create_access_token, get_password_hash, get_current_user, get_user, get_user_code
@@ -50,8 +51,8 @@ router = APIRouter()
 #     return {"access_token": access_token, "token_type": "bearer"}
 
 @router.post('/login', response_model=Token)
-async def login_for_access_token(user_login: UserLogin, db: Session = Depends(get_db)):
-    user = authenticate_user(db, user_login.user_name, user_login.password)
+async def login_for_access_token(response: Response, user_login: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    user = authenticate_user(db, user_login.username, user_login.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -62,7 +63,11 @@ async def login_for_access_token(user_login: UserLogin, db: Session = Depends(ge
         data={"sub": user.user_name}, expires_delta=access_token_expires
     )
 
-    return {"access_token": access_token, "token_type": "bearer"}
+    response.set_cookie(key="access_token",
+                        value=access_token, httponly=True, samesite='none', secure=True)
+
+    return Token(access_token=access_token, token_type="bearer")
+
 
 @router.get('/users/me', response_model=UserResponse)
 async def read_users_me(current_user: UserMaster = Depends(get_current_user)):

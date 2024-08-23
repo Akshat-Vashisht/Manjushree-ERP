@@ -17,7 +17,7 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 1440
 TOTAL_USER_CODE_LENGTH = 10
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -91,7 +91,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
 
 # UNCOMMENT FOR COOKIE BASED LOGIN
 async def get_current_user(
-    token: str,
+    token: str = Depends(oauth2_scheme),
     db: Session = Depends(get_db)
 ):
     if token is None:

@@ -130,6 +130,9 @@ class PickListMaster(Base):
                          default=datetime.datetime.now(datetime.UTC))
     closed_dt = Column(DateTime)
     closed_by = Column(Integer, nullable=False)
+    
+    details = relationship(
+        "PickListDetails", back_populates="pick_list_master")
 
 
 class ContainerMaster(Base):

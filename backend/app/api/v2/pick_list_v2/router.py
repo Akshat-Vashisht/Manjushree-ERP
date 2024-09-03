@@ -15,8 +15,8 @@ def create_pick_list_v2(inputs: schemas.CreatePickListSchema, db: Session = Depe
             PickListMaster.pick_list_code == inputs.pick_list_code).first()
 
         if pick_list:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f'Pick list \'{
-                                inputs.pick_list_code}\' already exists.')
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                                detail=f"Pick list {inputs.pick_list_code} already exists.")
 
         # Generate picklist data
         pick_list_data = {

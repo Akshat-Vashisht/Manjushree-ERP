@@ -3,7 +3,7 @@ from sqlalchemy import select, insert
 from sqlalchemy.orm import Session
 from . import schemas
 from ....utils import get_db
-from ....models import PickListMaster, PickListDetails, SKUMaster
+from ....models import PickListMaster, PickListDetails, SKUMaster, BusinessEntityMaster
 
 router = APIRouter()
 
@@ -11,6 +11,15 @@ router = APIRouter()
 @router.post('/pick-list-v2', status_code=status.HTTP_201_CREATED)
 def create_pick_list_v2(inputs: schemas.CreatePickListSchema, db: Session = Depends(get_db)):
     try:
+        # Check if business entity exists
+        entity = db.query(BusinessEntityMaster).filter(
+            BusinessEntityMaster.business_entity_code == inputs.business_entity_code).first()
+
+        if not entity:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                                detail=f"Business Entity {inputs.business_entity_code} does not exist")
+
+        # Check if pick list already exists
         pick_list = db.query(PickListMaster).filter(
             PickListMaster.pick_list_code == inputs.pick_list_code).first()
 
@@ -40,6 +49,17 @@ def create_pick_list_v2(inputs: schemas.CreatePickListSchema, db: Session = Depe
 
         mappings = {sku_code: sku_master_id for sku_code,
                     sku_master_id in results}
+
+        if len(sku_code_list) != len(mappings):
+            non_existing_skus = []
+
+            for sku_code in sku_code_list:
+                if sku_code not in mappings:
+                    non_existing_skus.append(sku_code)
+
+            message = 'SKUs ' + ','.join(non_existing_skus) + " do not exist"
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail=message)
 
         # Generate pick_list_details data to be inserted
         pick_list_details = []

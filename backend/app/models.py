@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, LargeBinary, Text
+from sqlalchemy import Column, Integer, Numeric, String, Boolean, DateTime, ForeignKey, LargeBinary, Text
 from sqlalchemy.orm import relationship
 from .database import Base
 import datetime
@@ -238,7 +238,8 @@ class PickListDetails(Base):
     sku_master_id = Column(Integer, ForeignKey(
         'sku_master.sku_master_id'), nullable=False)
     sku_code = Column(String(50), nullable=False)
-    quantity = Column(Integer, nullable=False)
+    quantity = Column(Numeric(precision=14, scale=4), nullable=False)
+    line_no = Column(Integer, nullable=True)
 
     pick_list_master = relationship("PickListMaster")
     sku_master = relationship("SKUMaster")
